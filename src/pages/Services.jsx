@@ -1,0 +1,386 @@
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import SectionTitle from '../components/SectionTitle'
+import ServiceCard from '../components/ServiceCard'
+import {
+  TrendingUp,
+  Smartphone,
+  Camera,
+  PenTool,
+  Palette,
+  Code,
+  Image,
+  Zap,
+} from 'lucide-react'
+
+const allServices = [
+  {
+    icon: TrendingUp,
+    title: 'Digital Marketing',
+    description:
+      'Comprehensive digital strategies including SEO, SEM, content marketing, and performance analytics to drive growth.',
+    fullDescription:
+      'We develop data-driven marketing strategies that increase brand visibility and generate qualified leads.',
+    features: ['SEO Optimization', 'SEM Campaigns', 'Content Strategy', 'Analytics'],
+  },
+  {
+    icon: Smartphone,
+    title: 'Social Media Management',
+    description:
+      'Engaging content creation and community management across all major social platforms.',
+    fullDescription:
+      'Build a thriving community around your brand with our strategic social media expertise.',
+    features: ['Content Calendar', 'Community Management', 'Engagement Strategy', 'Analytics'],
+  },
+  {
+    icon: Camera,
+    title: 'Video Editing',
+    description:
+      'Professional video production and editing services for promotional and corporate videos.',
+    fullDescription:
+      'Transform raw footage into compelling visual stories that captivate your audience.',
+    features: ['Color Grading', 'Motion Graphics', 'Sound Design', 'Video Effects'],
+  },
+  {
+    icon: PenTool,
+    title: 'Reel Creation',
+    description:
+      'Viral-ready short-form content optimized for Instagram, TikTok, and YouTube Shorts.',
+    fullDescription:
+      'Create trending reels that maximize engagement and reach with our creative expertise.',
+    features: ['Trend Research', 'Script Writing', 'Video Editing', 'Optimization'],
+  },
+  {
+    icon: Palette,
+    title: 'Branding',
+    description:
+      'Complete brand identity development including logo, guidelines, and brand strategy.',
+    fullDescription:
+      'Build a powerful brand that resonates with your target audience and stands out.',
+    features: ['Logo Design', 'Brand Guidelines', 'Strategy', 'Visual Identity'],
+  },
+  {
+    icon: Code,
+    title: 'Web Design',
+    description:
+      'Beautiful, responsive website design that converts visitors into customers.',
+    fullDescription:
+      'Premium web experiences built for performance, conversion, and user satisfaction.',
+    features: ['Responsive Design', 'UX/UI', 'Performance', 'SEO Ready'],
+  },
+  {
+    icon: Image,
+    title: 'Graphic Design',
+    description:
+      'Custom graphic design for all your marketing and brand communication needs.',
+    fullDescription:
+      'Eye-catching designs that communicate your brand message effectively.',
+    features: ['Print Design', 'Digital Design', 'Illustrations', 'Packaging'],
+  },
+  {
+    icon: Zap,
+    title: 'Product Photography',
+    description:
+      'Professional product photography for e-commerce and marketing materials.',
+    fullDescription:
+      'High-quality images that showcase your products in the best possible light.',
+    features: ['Studio Setup', 'Editing', 'Lighting', 'Post-Production'],
+  },
+  {
+    icon: Camera,
+    title: 'Ad Shoot Services',
+    description:
+      'Full production services for advertising campaigns and promotional content.',
+    fullDescription:
+      'Professional ad production that tells your brand story and drives conversions.',
+    features: ['Pre-Production', 'Filming', 'Post-Production', 'Color Grading'],
+  },
+]
+
+const pricingTiers = [
+  {
+    name: 'Starter',
+    price: '$999',
+    period: 'per month',
+    features: [
+      'Single service focus',
+      'Monthly deliverables',
+      'Email support',
+      'Basic analytics',
+      ' 2 rounds of revision',
+    ],
+  },
+  {
+    name: 'Professional',
+    price: '$2,499',
+    period: 'per month',
+    features: [
+      'Multiple services',
+      'Weekly deliverables',
+      'Priority support',
+      'Advanced analytics',
+      'Unlimited revisions',
+      'Strategy consultation',
+    ],
+    highlighted: true,
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    period: 'contact us',
+    features: [
+      'All services included',
+      'Daily collaboration',
+      '24/7 dedicated support',
+      'Custom analytics',
+      'Unlimited everything',
+      'Strategic partnership',
+    ],
+  },
+]
+
+export default function Services() {
+  const [selectedService, setSelectedService] = useState(null)
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  return (
+    <div className="overflow-hidden">
+      {/* Hero Section */}
+      <section className="min-h-screen flex items-center justify-center pt-20 px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-5xl text-center"
+        >
+          <motion.div className="inline-block px-6 py-2 rounded-full glass mb-8">
+            <span className="text-sm font-semibold text-secondary-400 uppercase">Our Services</span>
+          </motion.div>
+
+          <h1 className="text-6xl md:text-7xl font-bold gradient-text mb-8">Premium Creative Solutions</h1>
+
+          <p className="text-2xl text-text-muted leading-relaxed">
+            Comprehensive suite of services designed to elevate your brand and achieve your business goals.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* Services Grid */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {allServices.map((service, index) => (
+              <ServiceCard
+                key={index}
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Detailed Services */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle title="Service Details" subtitle="Deep Dive" />
+
+          <div className="space-y-20">
+            {allServices.slice(0, 3).map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}
+              >
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-3 mb-4">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 10 }}
+                      className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
+                    >
+                      <service.icon size={24} className="text-white" />
+                    </motion.div>
+                    <h3 className="text-3xl font-bold">{service.title}</h3>
+                  </div>
+
+                  <p className="text-xl text-text-muted mb-8 leading-relaxed">{service.fullDescription}</p>
+
+                  <div className="space-y-3 mb-8">
+                    {service.features.map((feature, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-center gap-3"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-400" />
+                        <span className="text-text-muted">{feature}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="btn-primary-gradient px-8 py-3"
+                  >
+                    Get Started
+                  </motion.button>
+                </div>
+
+                {/* Visual */}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="flex-1 h-96 rounded-2xl bg-gradient-to-br from-primary-500/20 via-secondary-500/20 to-primary-600/20 flex items-center justify-center"
+                >
+                  <motion.div
+                    animate={{ y: [0, -20, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <service.icon size={100} className="text-secondary-400 opacity-50" />
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle title="Our Process" subtitle="How We Work" />
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              { step: '01', title: 'Consultation', description: 'Understanding your needs and goals' },
+              { step: '02', title: 'Strategy', description: 'Developing a comprehensive plan' },
+              { step: '03', title: 'Execution', description: 'Creating premium deliverables' },
+              { step: '04', title: 'Optimization', description: 'Refining for maximum impact' },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                whileHover={{ y: -10 }}
+                className="relative p-8 rounded-2xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all"
+              >
+                <div className="text-5xl font-bold gradient-text mb-4">{item.step}</div>
+                <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
+                <p className="text-text-muted">{item.description}</p>
+
+                {/* Arrow */}
+                {index < 3 && (
+                  <motion.div
+                    animate={{ x: [0, 10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2"
+                  >
+                    →
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle title="Simple Pricing" subtitle="Flexible Plans" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pricingTiers.map((tier, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                whileHover={{ y: -10 }}
+                className={`p-8 rounded-2xl border transition-all ${
+                  tier.highlighted
+                    ? 'glass-premium border-secondary-400/50 ring-2 ring-secondary-400/50'
+                    : 'glass-premium border-background-border hover:border-background-border/80'
+                }`}
+              >
+                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
+                <div className="mb-6">
+                  <span className="text-5xl font-bold gradient-text">{tier.price}</span>
+                  <span className="text-text-muted ml-2">{tier.period}</span>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {tier.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-text-muted">
+                      <span className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-400" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                    tier.highlighted
+                      ? 'gradient-btn text-white'
+                      : 'glass hover:bg-white/20 border border-white/20'
+                  }`}
+                >
+                  Choose Plan
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-6xl font-bold gradient-text mb-6"
+          >
+            Ready to Get Started?
+          </motion.h2>
+
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
+          >
+            Schedule Consultation
+          </motion.button>
+        </div>
+      </section>
+    </div>
+  )
+}
