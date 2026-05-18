@@ -13,6 +13,23 @@ import Services from './pages/Services'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
 
+// Admin imports
+import { AdminAuthProvider } from './admin/context/AdminAuthContext'
+import { AdminDataProvider } from './admin/context/AdminDataContext'
+import { ProtectedRoute } from './admin/components/ProtectedRoute'
+import { AdminLogin } from './admin/pages/AdminLogin'
+import { AdminDashboard } from './admin/pages/Dashboard'
+import { HeroPage } from './admin/pages/HeroPage'
+import { AboutPage } from './admin/pages/AboutPage'
+import { ServicesPage } from './admin/pages/ServicesPage'
+import { PortfolioPage } from './admin/pages/PortfolioPage'
+import { TestimonialsPage } from './admin/pages/TestimonialsPage'
+import { TeamPage } from './admin/pages/TeamPage'
+import { ContactPage } from './admin/pages/ContactPage'
+import { SocialMediaPage } from './admin/pages/SocialMediaPage'
+import { MediaPage } from './admin/pages/MediaPage'
+import { SettingsPage } from './admin/pages/SettingsPage'
+
 function App() {
   const [isDark, setIsDark] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
@@ -34,31 +51,162 @@ function App() {
   const toggleTheme = () => setIsDark(!isDark)
 
   return (
-    <Router>
-      <AnimatePresence mode="wait">
-        {isLoading && <LoadingScreen key="loading" />}
-      </AnimatePresence>
-      
-      {!isLoading && (
-        <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
-          <Navbar isDark={isDark} toggleTheme={toggleTheme} />
-          
+    <AdminAuthProvider>
+      <AdminDataProvider>
+        <Router>
           <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
+            {isLoading && <LoadingScreen key="loading" />}
           </AnimatePresence>
           
-          <Footer />
-          <FloatingWhatsApp />
-          <ScrollToTop />
-        </div>
-      )}
-    </Router>
+          {!isLoading && (
+            <>
+              <AnimatePresence mode="wait">
+                <Routes>
+                  {/* Admin Routes */}
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/hero"
+                    element={
+                      <ProtectedRoute>
+                        <HeroPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/about"
+                    element={
+                      <ProtectedRoute>
+                        <AboutPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/services"
+                    element={
+                      <ProtectedRoute>
+                        <ServicesPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/portfolio"
+                    element={
+                      <ProtectedRoute>
+                        <PortfolioPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/testimonials"
+                    element={
+                      <ProtectedRoute>
+                        <TestimonialsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/team"
+                    element={
+                      <ProtectedRoute>
+                        <TeamPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/contact"
+                    element={
+                      <ProtectedRoute>
+                        <ContactPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/social-media"
+                    element={
+                      <ProtectedRoute>
+                        <SocialMediaPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/media"
+                    element={
+                      <ProtectedRoute>
+                        <MediaPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/settings"
+                    element={
+                      <ProtectedRoute>
+                        <SettingsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* Main Website Routes */}
+                  <Route path="/" element={
+                    <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
+                      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+                      <Home />
+                      <Footer />
+                      <FloatingWhatsApp />
+                      <ScrollToTop />
+                    </div>
+                  } />
+                  <Route path="/about" element={
+                    <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
+                      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+                      <About />
+                      <Footer />
+                      <FloatingWhatsApp />
+                      <ScrollToTop />
+                    </div>
+                  } />
+                  <Route path="/services" element={
+                    <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
+                      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+                      <Services />
+                      <Footer />
+                      <FloatingWhatsApp />
+                      <ScrollToTop />
+                    </div>
+                  } />
+                  <Route path="/portfolio" element={
+                    <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
+                      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+                      <Portfolio />
+                      <Footer />
+                      <FloatingWhatsApp />
+                      <ScrollToTop />
+                    </div>
+                  } />
+                  <Route path="/contact" element={
+                    <div className="bg-background-main dark:bg-background-main text-text-primary min-h-screen">
+                      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+                      <Contact />
+                      <Footer />
+                      <FloatingWhatsApp />
+                      <ScrollToTop />
+                    </div>
+                  } />
+                </Routes>
+              </AnimatePresence>
+            </>
+          )}
+        </Router>
+      </AdminDataProvider>
+    </AdminAuthProvider>
   )
 }
 
