@@ -19,6 +19,8 @@ export default function Contact() {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [toast, setToast] = useState({ message: '', type: '' })
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -27,9 +29,15 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true)
+    setToast({ message: '', type: '' })
+
     try {
-      const response = await fetch('https://script.google.com/macros/d/1mDsDX8ucjgdHIomp8hxzDJGRRHkKN2GP4gXNTdc6-dg/usercontent', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxBIxYIwme6x-BM97KQs-kS3WcKuL0mlmFOr8Aeurj2LOB62F7b2BMkRZDrqamhpSRH/exec', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
         body: new URLSearchParams({
           name: formData.name,
           email: formData.email,
@@ -39,13 +47,21 @@ export default function Contact() {
           message: formData.message,
         }),
       })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form')
+      }
+
       setSubmitted(true)
-      setTimeout(() => {
-        setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' })
-        setSubmitted(false)
-      }, 5000)
+      setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' })
+      setToast({ message: 'Message sent successfully!', type: 'success' })
+      setTimeout(() => setSubmitted(false), 5000)
     } catch (error) {
       console.error('Error submitting form:', error)
+      setToast({ message: 'Failed to send message. Please try again.', type: 'error' })
+    } finally {
+      setLoading(false)
+      setTimeout(() => setToast({ message: '', type: '' }), 5000)
     }
   }
 
@@ -312,14 +328,25 @@ export default function Contact() {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full btn-primary-gradient py-3 text-lg font-semibold flex items-center justify-center gap-2"
+                whileHover={{ scale: loading ? 1 : 1.05 }}
+                whileTap={{ scale: loading ? 1 : 0.95 }}
+                disabled={loading}
+                className={`w-full btn-primary-gradient py-3 text-lg font-semibold flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                {submitted ? 'Message Sent! ✓' : 'Send Message'}
-                {!submitted && <Send size={20} />}
+                {loading ? 'Sending...' : submitted ? 'Message Sent! ✓' : 'Send Message'}
+                {!loading && !submitted && <Send size={20} />}
               </motion.button>
             </form>
+            {toast.message && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className={`mt-6 rounded-3xl px-6 py-4 text-sm font-semibold ${toast.type === 'success' ? 'bg-emerald-500/95 text-white' : 'bg-red-500/95 text-white'} shadow-2xl shadow-black/10`}
+              >
+                {toast.message}
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </section>
