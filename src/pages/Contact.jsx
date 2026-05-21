@@ -35,26 +35,20 @@ export default function Contact() {
     try {
       const response = await fetch('https://script.google.com/macros/s/AKfycbxBIxYIwme6x-BM97KQs-kS3WcKuL0mlmFOr8Aeurj2LOB62F7b2BMkRZDrqamhpSRH/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          subject: formData.subject,
-          message: formData.message,
-        }),
+        body: JSON.stringify(formData),
       })
 
-      if (!response.ok) {
+      if (!response || (response.type !== 'opaque' && !response.ok)) {
         throw new Error('Failed to submit form')
       }
 
       setSubmitted(true)
       setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' })
-      setToast({ message: 'Message sent successfully!', type: 'success' })
+      setToast({ message: 'Message Sent Successfully', type: 'success' })
       setTimeout(() => setSubmitted(false), 5000)
     } catch (error) {
       console.error('Error submitting form:', error)
