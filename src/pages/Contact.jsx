@@ -372,7 +372,7 @@ export default function Contact() {
             className="rounded-2xl overflow-hidden h-96 border border-background-border"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1841144348713!2d-118.24271492345384!3d34.052235064627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c75dbed57005%3A0xe677bc1f72304d56!2sLos%20Angeles%2C%20CA%2090001!5e0!3m2!1sen!2sus!4v1234567890"
+              src="https://www.google.com/maps?q=Bengaluru%2C%20Karnataka&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
