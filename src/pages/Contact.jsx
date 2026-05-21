@@ -25,14 +25,28 @@ export default function Contact() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    setSubmitted(true)
-    setTimeout(() => {
-      setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' })
-      setSubmitted(false)
-    }, 5000)
+    try {
+      const response = await fetch('https://script.google.com/macros/d/1mDsDX8ucjgdHIomp8hxzDJGRRHkKN2GP4gXNTdc6-dg/usercontent', {
+        method: 'POST',
+        body: new URLSearchParams({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      })
+      setSubmitted(true)
+      setTimeout(() => {
+        setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' })
+        setSubmitted(false)
+      }, 5000)
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
   }
 
   const containerVariants = {
@@ -333,7 +347,7 @@ export default function Contact() {
           </motion.p>
 
           <motion.a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/918277251766"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
