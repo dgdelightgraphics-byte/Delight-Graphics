@@ -209,5 +209,9 @@ For questions or issues, please reach out to:
 - WhatsApp: Available in the website
 
 ---
+## Push to git
+git add .
+git commit -m "Fixed Vercel routing"
+git push
 
 Made with ❤️ for creative brands. Transform your vision with Delight Graphics.
