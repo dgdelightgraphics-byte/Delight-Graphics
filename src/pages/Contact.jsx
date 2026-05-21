@@ -229,21 +229,11 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
             className="p-8 rounded-xl glass-premium border border-background-border"
           >
-            <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
-              {[
-                { icon: Clock, label: 'Fast reply', value: 'Within 1-2 hours' },
-                { icon: ShieldCheck, label: 'Safe & secure', value: '100% confidential' },
-                { icon: Sparkles, label: 'Custom solutions', value: 'Tailored proposals' },
-              ].map((item) => (
-                <div key={item.label} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-center shadow-xl shadow-black/5">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary-400/10 text-secondary-400">
-                    <item.icon size={20} />
-                  </div>
-                  <p className="text-sm font-semibold text-white">{item.label}</p>
-                  <p className="mt-1 text-sm text-text-muted">{item.value}</p>
-                </div>
-              ))}
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-secondary-400/20 text-2xl font-bold text-white border border-secondary-400">
+                DG
+              </div>
+              <h2 className="text-3xl font-bold text-white">Delight Graphics</h2>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
