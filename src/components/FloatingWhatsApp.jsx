@@ -6,7 +6,7 @@ export default function FloatingWhatsApp() {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/1234567890?text=Hello%20Delight%20Graphics', '_blank')
+    window.open('https://wa.me/918277251766?text=Hello%20Delight%20Graphics', '_blank')
   }
 
   return (

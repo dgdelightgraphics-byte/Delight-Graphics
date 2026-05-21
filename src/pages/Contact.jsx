@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook, Send } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook, ShieldCheck, Clock, Sparkles, Send } from 'lucide-react'
 
 const businessHours = [
   { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM' },
@@ -229,10 +229,26 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
             className="p-8 rounded-xl glass-premium border border-background-border"
           >
-            <h2 className="text-3xl font-bold mb-8">Send us a Message</h2>
+            <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+              {[
+                { icon: Clock, label: 'Fast reply', value: 'Within 1-2 hours' },
+                { icon: ShieldCheck, label: 'Safe & secure', value: '100% confidential' },
+                { icon: Sparkles, label: 'Custom solutions', value: 'Tailored proposals' },
+              ].map((item) => (
+                <div key={item.label} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-center shadow-xl shadow-black/5">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary-400/10 text-secondary-400">
+                    <item.icon size={20} />
+                  </div>
+                  <p className="text-sm font-semibold text-white">{item.label}</p>
+                  <p className="mt-1 text-sm text-text-muted">{item.value}</p>
+                </div>
+              ))}
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Name */}
               <div>
                 <label className="block text-sm font-semibold mb-2">Your Name</label>
                 <motion.input
@@ -242,7 +258,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   whileFocus={{ scale: 1.02 }}
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:outline-none transition-all text-white placeholder-gray-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:ring-2 focus:ring-secondary-500/20 focus:outline-none transition-all text-white placeholder-gray-500"
                   placeholder="John Doe"
                 />
               </div>
@@ -257,7 +273,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   whileFocus={{ scale: 1.02 }}
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:outline-none transition-all text-white placeholder-gray-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:ring-2 focus:ring-secondary-500/20 focus:outline-none transition-all text-white placeholder-gray-500"
                   placeholder="john@example.com"
                 />
               </div>
@@ -271,12 +287,11 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   whileFocus={{ scale: 1.02 }}
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:outline-none transition-all text-white placeholder-gray-500"
-                  placeholder="+1 (234) 567-890"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:ring-2 focus:ring-secondary-500/20 focus:outline-none transition-all text-white placeholder-gray-500"
+                  placeholder="+91-8277251766"
                 />
               </div>
 
-              {/* Company */}
               <div>
                 <label className="block text-sm font-semibold mb-2">Company/Brand</label>
                 <motion.input
@@ -285,9 +300,10 @@ export default function Contact() {
                   value={formData.company}
                   onChange={handleChange}
                   whileFocus={{ scale: 1.02 }}
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:outline-none transition-all text-white placeholder-gray-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-background-border focus:border-secondary-400/50 focus:ring-2 focus:ring-secondary-500/20 focus:outline-none transition-all text-white placeholder-gray-500"
                   placeholder="Your Company"
                 />
+              </div>
               </div>
 
               {/* Subject */}
