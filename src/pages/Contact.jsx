@@ -33,7 +33,7 @@ export default function Contact() {
     setToast({ message: '', type: '' })
 
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxBIxYIwme6x-BM97KQs-kS3WcKuL0mlmFOr8Aeurj2LOB62F7b2BMkRZDrqamhpSRH/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxG0pxtSVMJnY-_ybenUt0CjQNRTNQxcqytqAKgU8NHufoWjrWnN5qMrsHlQRpxI0w/exec', {
         method: 'POST',
         mode: 'no-cors',
         headers: {
