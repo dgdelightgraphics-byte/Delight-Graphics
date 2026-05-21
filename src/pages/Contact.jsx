@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Send } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook, Send } from 'lucide-react'
 
 const businessHours = [
   { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM' },
@@ -95,7 +95,7 @@ export default function Contact() {
 
               {/* Email */}
               <motion.a
-                href="mailto:info@delightgraphics.com"
+                href="mailto:dgdelightgraphics@gmail.com"
                 whileHover={{ x: 10 }}
                 className="flex items-start gap-6 p-6 rounded-xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all mb-6 group"
               >
@@ -107,13 +107,13 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Email</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">info@delightgraphics.com</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">dgdelightgraphics@gmail.com</p>
                 </div>
               </motion.a>
 
               {/* Phone */}
               <motion.a
-                href="tel:+1234567890"
+                href="tel:+918277251766"
                 whileHover={{ x: 10 }}
                 className="flex items-start gap-6 p-6 rounded-xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all mb-6 group"
               >
@@ -125,7 +125,7 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Phone</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">+1 (234) 567-890</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">+91-8277251766</p>
                 </div>
               </motion.a>
 
@@ -142,7 +142,7 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Address</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">Creative Hub, Digital City, CA 90001</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">Bengaluru, Karnataka</p>
                 </div>
               </motion.div>
             </div>
@@ -176,13 +176,16 @@ export default function Contact() {
               <h3 className="text-lg font-semibold mb-6">Follow Us</h3>
               <div className="flex gap-4">
                 {[
-                  { icon: Instagram, label: 'Instagram' },
-                  { icon: Linkedin, label: 'LinkedIn' },
-                  { icon: Twitter, label: 'Twitter' },
+                  { icon: Instagram, href: 'https://www.instagram.com/dg_delight_graphics?igsh=MW5oNjh5ZXpqeW5j&utm_source=qr', label: 'Instagram' },
+                  { icon: Facebook, href: 'https://www.facebook.com/share/16gB9m2o6L/?mibextid=wwXIfr', label: 'Facebook' },
+                  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+                  { icon: Twitter, href: '#', label: 'Twitter' },
                 ].map((social, index) => (
                   <motion.a
                     key={index}
-                    href="#"
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     whileHover={{ scale: 1.15, rotate: 10 }}
                     whileTap={{ scale: 0.95 }}
                     className="p-3 rounded-lg glass-premium hover:bg-gradient-to-r hover:from-primary-500/20 hover:to-secondary-500/20 transition-all"

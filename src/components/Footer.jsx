@@ -6,10 +6,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   const socialLinks = [
-    { icon: Instagram, href: '#', label: 'Instagram' },
+    { icon: Instagram, href: 'https://www.instagram.com/dg_delight_graphics?igsh=MW5oNjh5ZXpqeW5j&utm_source=qr', label: 'Instagram' },
     { icon: Linkedin, href: '#', label: 'LinkedIn' },
     { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
+    { icon: Facebook, href: 'https://www.facebook.com/share/16gB9m2o6L/?mibextid=wwXIfr', label: 'Facebook' },
   ]
 
   const containerVariants = {
@@ -83,19 +83,19 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-text-muted">
                 <Mail size={18} className="text-secondary-400" />
-                <a href="mailto:info@delightgraphics.com" className="hover:text-secondary-400 transition-all">
-                  info@delightgraphics.com
+                <a href="mailto:dgdelightgraphics@gmail.com" className="hover:text-secondary-400 transition-all">
+                  dgdelightgraphics@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3 text-text-muted">
                 <Phone size={18} className="text-secondary-400" />
-                <a href="tel:+1234567890" className="hover:text-secondary-400 transition-all">
-                  +1 (234) 567-890
+                <a href="tel:+918277251766" className="hover:text-secondary-400 transition-all">
+                  +91-8277251766
                 </a>
               </li>
               <li className="flex items-start gap-3 text-text-muted">
                 <MapPin size={18} className="text-secondary-400 mt-1" />
-                <span>Creative Hub, Digital City, CA 90001</span>
+                <span>Bengaluru, Karnataka</span>
               </li>
             </ul>
           </motion.div>
@@ -106,7 +106,7 @@ export default function Footer() {
           className="flex flex-col md:flex-row justify-between items-center gap-6 py-8 border-t border-background-border/50"
         >
           <div className="text-text-muted text-sm">
-            © {currentYear} Delight Graphics. All rights reserved.
+            Copyright 2003-2026 Delight Graphics | All Rights Reserved | Designed By | Developed By | Powered By | Brand consultant
           </div>
 
           <div className="flex items-center gap-4">
