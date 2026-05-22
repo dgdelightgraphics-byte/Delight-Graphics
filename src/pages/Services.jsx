@@ -11,6 +11,16 @@ import {
   Code,
   Image,
   Zap,
+  MessageCircle,
+  FileText,
+  Package,
+  MapPin,
+  Layout,
+  BookOpen,
+  MessageSquare,
+  Layers,
+  Clipboard,
+  Edit3,
 } from 'lucide-react'
 
 const allServices = [
@@ -22,6 +32,15 @@ const allServices = [
     fullDescription:
       'We develop data-driven marketing strategies that increase brand visibility and generate qualified leads.',
     features: ['SEO Optimization', 'SEM Campaigns', 'Content Strategy', 'Analytics'],
+  },
+  {
+    icon: MessageCircle,
+    title: 'Content Marketing',
+    description:
+      'Strategic content development and distribution to attract, engage, and retain your ideal audience.',
+    fullDescription:
+      'From blog articles to newsletters and social storytelling, we build content systems that generate trust and convert customers.',
+    features: ['Content Strategy', 'Editorial Planning', 'SEO Writing', 'Audience Growth'],
   },
   {
     icon: Smartphone,
@@ -94,6 +113,114 @@ const allServices = [
     fullDescription:
       'Professional ad production that tells your brand story and drives conversions.',
     features: ['Pre-Production', 'Filming', 'Post-Production', 'Color Grading'],
+  },
+  {
+    icon: PenTool,
+    title: 'Logo Design',
+    description:
+      'Custom logo creation that defines your brand identity with personality and clarity.',
+    fullDescription:
+      'We design unforgettable logos that tell your brand story and can be used consistently across every touchpoint.',
+    features: ['Brand Symbol', 'Typography', 'Color Palette', 'Usage Guidelines'],
+  },
+  {
+    icon: FileText,
+    title: 'Brochure Design',
+    description:
+      'Eye-catching brochure layouts for print and digital distribution.',
+    fullDescription:
+      'From corporate brochures to product catalogs, we create polished designs that communicate your message clearly.',
+    features: ['Layout Design', 'Print Ready', 'Typography', 'Brand Consistency'],
+  },
+  {
+    icon: Package,
+    title: 'Packaging Design',
+    description:
+      'Creative packaging concepts that elevate products on the shelf and online.',
+    fullDescription:
+      'We design packaging that reflects your brand, protects your product, and converts shoppers into buyers.',
+    features: ['Structural Concepts', 'Visual Branding', 'Print Specifications', 'Shelf Impact'],
+  },
+  {
+    icon: MapPin,
+    title: 'Signage Design',
+    description:
+      'Functional and branded signage solutions for retail, events, and storefronts.',
+    fullDescription:
+      'We create signs that guide customers, reinforce your identity, and make your space feel cohesive.',
+    features: ['Wayfinding', 'Outdoor Signage', 'Indoor Signage', 'Brand Visibility'],
+  },
+  {
+    icon: Layout,
+    title: 'Exhibition Stall Design',
+    description:
+      'Engaging exhibition stall layouts designed to attract and retain visitors.',
+    fullDescription:
+      'Our booth designs combine visual impact with audience flow to deliver strong event performance.',
+    features: ['Concept Design', '3D Mockups', 'Brand Display', 'Visitor Experience'],
+  },
+  {
+    icon: Layout,
+    title: 'Poster Design',
+    description:
+      'Bold poster designs for events, campaigns, and promotions.',
+    fullDescription:
+      'We craft posters that capture attention and communicate your message instantly with strong visuals.',
+    features: ['Hierarchy', 'Typography', 'Illustration', 'Print Optimization'],
+  },
+  {
+    icon: BookOpen,
+    title: 'Magazine Design',
+    description:
+      'Editorial layout design for magazines, catalogs, and publications.',
+    fullDescription:
+      'From cover to content pages, we design cohesive editorial experiences that keep readers engaged.',
+    features: ['Layout Systems', 'Typography', 'Image Styling', 'Print Preparation'],
+  },
+  {
+    icon: MessageSquare,
+    title: 'WhatsApp Invitation Design',
+    description:
+      'Stylish WhatsApp invitation graphics for launches, events, and special announcements.',
+    fullDescription:
+      'Create visually appealing invite cards for direct messaging that deliver your message with clarity and charm.',
+    features: ['Mobile-First Design', 'Custom Messaging', 'Shareable Graphics', 'Brand Styling'],
+  },
+  {
+    icon: Layers,
+    title: 'Social Media Graphics Design',
+    description:
+      'Branded social media visuals for posts, stories, and campaigns.',
+    fullDescription:
+      'We design scroll-stopping graphics that elevate your social presence and support your content strategy.',
+    features: ['Post Templates', 'Story Graphics', 'Campaign Assets', 'Platform Optimization'],
+  },
+  {
+    icon: Image,
+    title: 'Web & Social Banner Design',
+    description:
+      'Banner graphics that look great across websites and social profiles.',
+    fullDescription:
+      'Our banner designs are tailored for web and social channels, ensuring consistent impact across platforms.',
+    features: ['Header Banners', 'Ad Banners', 'Social Covers', 'Responsive Layouts'],
+  },
+  {
+    icon: Clipboard,
+    title: 'Brand Kit Design',
+    description:
+      'Comprehensive brand kit creation for consistent visual identity across touchpoints.',
+    fullDescription:
+      'We package your logo, colors, typography, and usage rules into a cohesive brand kit for easy adoption.',
+    features: ['Logo System', 'Color Palette', 'Typography Guide', 'Asset Library'],
+  },
+  {
+    icon: Edit3,
+    title: 'Blog',
+    description:
+      'Blog design and content presentation that supports thought leadership and SEO.',
+    fullDescription:
+      'We craft blog-focused visuals and layouts that make your content easy to read and share.',
+    features: ['Post Templates', 'Featured Images', 'Content Layout', 'Readable Design'],
   },
 ]
 

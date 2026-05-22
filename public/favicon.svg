@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="faviconTitle faviconDesc">
+  <title id="faviconTitle">Delight Graphics Favicon</title>
+  <desc id="faviconDesc">Favicon version of the Delight Graphics logo.</desc>
+  <rect x="6" y="24" width="48" height="72" rx="14" ry="14" fill="#48c9d1" />
+  <path d="M54 24 H90 A16 16 0 0 1 106 40 V80 A16 16 0 0 1 90 96 H66" fill="#f8c12c" />
+  <path d="M66 24 H90 A16 16 0 0 1 106 40 V58 H90 A16 16 0 0 0 74 42 H66 V24 Z" fill="#f8c12c" opacity="0.95" />
+  <circle cx="94" cy="36" r="8" fill="#ff5a2d" />
+</svg>

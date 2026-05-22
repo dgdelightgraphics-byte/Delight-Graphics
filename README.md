@@ -208,6 +208,8 @@ For questions or issues, please reach out to:
 - Phone: +1 (234) 567-890
 - WhatsApp: Available in the website
 
+## Run Code
+npm run dev
 ---
 ## Push to git
 git add .

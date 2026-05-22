@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import logo from '../../assets/logo.svg'
 import {
   LayoutDashboard,
   Zap,
@@ -136,6 +137,7 @@ export const AdminSidebar = () => {
           transition={{ delay: 0.2 }}
           className="text-center"
         >
+          <img src={logo} alt="Delight Graphics logo" className="mx-auto h-14 w-14 rounded-2xl mb-3" />
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent mb-2">
             DG Admin
           </h1>

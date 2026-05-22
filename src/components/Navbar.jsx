@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import logo from '../assets/logo.svg'
 
 export default function Navbar({ isDark, toggleTheme }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,9 +26,7 @@ export default function Navbar({ isDark, toggleTheme }) {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-white/10 text-white font-bold tracking-tight border border-white/10 shadow-lg shadow-black/10">
-              DG
-            </div>
+            <img src={logo} alt="Delight Graphics logo" className="h-12 w-12 rounded-3xl border border-white/10 shadow-lg shadow-black/10 bg-slate-950" />
             <div className="text-white font-extrabold text-xl leading-tight tracking-tight">
               Delight Graphics
             </div>

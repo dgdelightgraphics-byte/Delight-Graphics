@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import logo from '../assets/logo.svg'
 
 export default function LoadingScreen() {
   const containerVariants = {
@@ -38,7 +39,7 @@ export default function LoadingScreen() {
           transition={{ duration: 2, repeat: Infinity }}
           className="w-20 h-20 mx-auto mb-8 bg-gradient-to-r from-primary-500 via-secondary-500 to-secondary-400 rounded-xl flex items-center justify-center"
         >
-          <span className="text-xl font-black text-white">DG</span>
+          <img src={logo} alt="Delight Graphics logo" className="h-12 w-12 object-contain" />
         </motion.div>
 
         {/* Text Animation */}
