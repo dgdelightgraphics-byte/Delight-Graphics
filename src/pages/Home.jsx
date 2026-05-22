@@ -7,6 +7,7 @@ import ServiceCard from '../components/ServiceCard'
 import PortfolioCard from '../components/PortfolioCard'
 import TestimonialCard from '../components/TestimonialCard'
 import StatsCard from '../components/StatsCard'
+import ProcessStep from '../components/ProcessStep'
 import {
   Zap,
   Smartphone,
@@ -113,6 +114,39 @@ const stats = [
   { value: '150', label: 'Happy Clients' },
   { value: '50M', label: 'Total Reach' },
   { value: '10', label: 'Years Experience' },
+]
+
+const processSteps = [
+  {
+    number: 1,
+    title: 'Discover',
+    description: 'Understanding your business, goals and audience.',
+  },
+  {
+    number: 2,
+    title: 'Strategy',
+    description: 'Defining creative direction and communication approach.',
+  },
+  {
+    number: 3,
+    title: 'Design',
+    description: 'Transforming ideas into impactful visual concepts.',
+  },
+  {
+    number: 4,
+    title: 'Review',
+    description: 'Refining designs based on feedback and usability.',
+  },
+  {
+    number: 5,
+    title: 'Deliver',
+    description: 'Final files delivered, ready for print or digital use.',
+  },
+  {
+    number: 6,
+    title: 'Support',
+    description: 'Ongoing creative assistance as your brand evolves.',
+  },
 ]
 
 export default function Home() {
@@ -263,6 +297,43 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <StatsCard key={index} value={stat.value} label={stat.label} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our Creative Process */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-4"
+            >
+              <p className="text-primary-400 font-semibold text-sm uppercase tracking-widest mb-2">
+                Our Process
+              </p>
+              <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-4 max-w-3xl">
+                Our Creative Process
+              </h2>
+              <p className="text-text-muted text-lg leading-relaxed max-w-3xl">
+                We begin by understanding your business, objectives, target audience and design requirements through
+                structured discussions and briefs.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {processSteps.map((step, index) => (
+              <ProcessStep
+                key={index}
+                number={step.number}
+                title={step.title}
+                description={step.description}
+                index={index}
+              />
             ))}
           </div>
         </div>
