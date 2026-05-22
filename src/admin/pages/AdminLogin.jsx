@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-import logo from '../../assets/logo.svg'
 import { useAdminAuth } from '../context/AdminAuthContext'
 
 export const AdminLogin = () => {
@@ -84,7 +83,7 @@ export const AdminLogin = () => {
               className="inline-block"
             >
               <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                <img src={logo} alt="Delight Graphics logo" className="h-10 w-10 object-contain" />
+                <Lock size={32} className="text-white" />
               </div>
             </motion.div>
             <h1 className="text-3xl font-bold text-white mb-2">Admin Login</h1>

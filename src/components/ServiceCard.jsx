@@ -1,7 +1,15 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 
 export default function ServiceCard({ icon: Icon, title, description, index }) {
+  const navigate = useNavigate()
+
+  const handleGetStarted = () => {
+    navigate('/contact')
+  }
+
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -38,15 +46,14 @@ export default function ServiceCard({ icon: Icon, title, description, index }) {
         {description}
       </p>
 
-      <motion.div
+      <motion.button
+        onClick={handleGetStarted}
         whileHover={{ x: 5 }}
-        className="mt-6 flex items-center text-secondary-400 font-semibold hover:text-secondary-300 transition-colors"
+        className="mt-6 px-6 py-2.5 bg-gradient-to-r from-secondary-500 to-primary-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300 flex items-center gap-2 group/btn"
       >
-        <span>Learn More</span>
-        <motion.span animate={{ x: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-          →
-        </motion.span>
-      </motion.div>
+        <span>Get Started</span>
+        <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+      </motion.button>
     </motion.div>
   )
 }

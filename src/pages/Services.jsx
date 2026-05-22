@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import SectionTitle from '../components/SectionTitle'
 import ServiceCard from '../components/ServiceCard'
@@ -267,18 +267,6 @@ const pricingTiers = [
 ]
 
 export default function Services() {
-  const [selectedService, setSelectedService] = useState(null)
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
@@ -313,78 +301,6 @@ export default function Services() {
                 description={service.description}
                 index={index}
               />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Detailed Services */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <SectionTitle title="Service Details" subtitle="Deep Dive" />
-
-          <div className="space-y-20">
-            {allServices.slice(0, 3).map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}
-              >
-                {/* Content */}
-                <div className="flex-1">
-                  <div className="inline-flex items-center gap-3 mb-4">
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 10 }}
-                      className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
-                    >
-                      <service.icon size={24} className="text-white" />
-                    </motion.div>
-                    <h3 className="text-3xl font-bold">{service.title}</h3>
-                  </div>
-
-                  <p className="text-xl text-text-muted mb-8 leading-relaxed">{service.fullDescription}</p>
-
-                  <div className="space-y-3 mb-8">
-                    {service.features.map((feature, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-400" />
-                        <span className="text-text-muted">{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="btn-primary-gradient px-8 py-3"
-                  >
-                    Get Started
-                  </motion.button>
-                </div>
-
-                {/* Visual */}
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="flex-1 h-96 rounded-2xl bg-gradient-to-br from-primary-500/20 via-secondary-500/20 to-primary-600/20 flex items-center justify-center"
-                >
-                  <motion.div
-                    animate={{ y: [0, -20, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    <service.icon size={100} className="text-secondary-400 opacity-50" />
-                  </motion.div>
-                </motion.div>
-              </motion.div>
             ))}
           </div>
         </div>
