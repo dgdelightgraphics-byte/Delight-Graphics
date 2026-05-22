@@ -303,27 +303,9 @@ export default function Home() {
       </section>
 
       {/* Our Creative Process */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-4"
-            >
-              <p className="text-primary-400 font-semibold text-sm uppercase tracking-widest mb-2">
-                Our Process
-              </p>
-              <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-4 max-w-3xl">
-                Our Creative Process
-              </h2>
-              <p className="text-text-muted text-lg leading-relaxed max-w-3xl">
-                We begin by understanding your business, objectives, target audience and design requirements through
-                structured discussions and briefs.
-              </p>
-            </motion.div>
-          </div>
+          <SectionTitle title="Our Creative Process" subtitle="Our Process" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {processSteps.map((step, index) => (
@@ -345,7 +327,7 @@ export default function Home() {
           <SectionTitle title="Our Services" subtitle="What We Do" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
+            {services.slice(0, 4).map((service, index) => (
               <ServiceCard
                 key={index}
                 icon={service.icon}
@@ -354,6 +336,19 @@ export default function Home() {
                 index={index}
               />
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link to="/services">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-primary-500/20 hover:opacity-95 transition-all"
+              >
+                View All Services
+                <ArrowRight size={18} />
+              </motion.button>
+            </Link>
           </div>
         </div>
       </section>
