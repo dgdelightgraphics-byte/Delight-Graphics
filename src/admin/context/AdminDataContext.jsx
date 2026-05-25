@@ -20,46 +20,123 @@ const DEFAULT_DATA = {
   services: [
     {
       id: 1,
-      title: 'Web Design',
-      description: 'Beautiful and responsive web design',
-      icon: 'globe',
+      icon: 'TrendingUp',
+      title: 'Digital Marketing',
+      description: 'Comprehensive strategies to grow your brand online',
     },
     {
       id: 2,
-      title: 'Web Development',
-      description: 'Fast and scalable web applications',
-      icon: 'code',
+      icon: 'Smartphone',
+      title: 'Social Media',
+      description: 'Engaging content that connects with your audience',
     },
     {
       id: 3,
-      title: 'UI/UX Design',
-      description: 'User-centered design solutions',
-      icon: 'palette',
+      icon: 'Camera',
+      title: 'Video Editing',
+      description: 'Professional video production and editing services',
     },
     {
       id: 4,
+      icon: 'PenTool',
+      title: 'Reel Creation',
+      description: 'Viral-ready reels and short-form content',
+    },
+    {
+      id: 5,
+      icon: 'Palette',
       title: 'Branding',
-      description: 'Complete brand identity solutions',
-      icon: 'briefcase',
+      description: 'Complete brand identity and strategy development',
+    },
+    {
+      id: 6,
+      icon: 'Code',
+      title: 'Web Design',
+      description: 'Beautiful and functional website design',
     },
   ],
   portfolio: [
     {
       id: 1,
-      title: 'E-commerce Platform',
-      description: 'Modern e-commerce website',
-      category: 'Web Design',
+      title: 'Premium Brand Campaign',
+      category: 'Branding',
+      description: 'Award-winning campaign for luxury brand',
       images: [],
+      featured: true,
+    },
+    {
+      id: 2,
+      title: 'Social Media Series',
+      category: 'Social Media',
+      description: 'Engaging content series with 2M+ views',
+      images: [],
+      featured: true,
+    },
+    {
+      id: 3,
+      title: 'Corporate Video',
+      category: 'Video Editing',
+      description: 'Professional corporate video production',
+      images: [],
+      featured: true,
+    },
+    {
+      id: 4,
+      title: 'Product Photography',
+      category: 'Photography',
+      description: 'High-end product shoot for e-commerce',
+      images: [],
+      featured: false,
+    },
+    {
+      id: 5,
+      title: 'Animated Explainer',
+      category: 'Animation',
+      description: 'Custom animated explainer video',
+      images: [],
+      featured: false,
+    },
+    {
+      id: 6,
+      title: 'Digital Campaign',
+      category: 'Marketing',
+      description: '500% ROI digital marketing campaign',
+      images: [],
+      featured: false,
+    },
+    {
+      id: 7,
+      title: 'Luxury Brand Campaign',
+      category: 'Branding',
+      description: 'Multi-channel marketing campaign for AMRA & ELMA luxury brand',
+      images: ['/portfolio-luxury-brand.jpg'],
       featured: true,
     },
   ],
   testimonials: [
     {
       id: 1,
-      clientName: 'John Doe',
-      review: 'Excellent service and outstanding results!',
+      name: 'Sarah Johnson',
+      company: 'TechStart CEO',
+      content: 'Delight Graphics transformed our brand presence. Their creativity and professionalism exceeded expectations.',
       rating: 5,
-      photo: '',
+      image: '',
+    },
+    {
+      id: 2,
+      name: 'Michael Chen',
+      company: 'Fashion House',
+      content: 'The team delivers stunning visuals that resonate with our audience. Highly recommended for premium brands.',
+      rating: 5,
+      image: '',
+    },
+    {
+      id: 3,
+      name: 'Emma Wilson',
+      company: 'Luxury Retail',
+      content: 'Outstanding work across all platforms. They understand premium branding like no one else.',
+      rating: 5,
+      image: '',
     },
   ],
   team: [
@@ -102,10 +179,13 @@ export const AdminDataProvider = ({ children }) => {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('admin_data')
+    // Check for website_data first (shared with website), then fall back to admin_data
+    const savedData = localStorage.getItem('website_data') || localStorage.getItem('admin_data')
     if (savedData) {
       try {
-        setData(JSON.parse(savedData))
+        const parsedData = JSON.parse(savedData)
+        // Merge with defaults to handle new fields
+        setData({ ...DEFAULT_DATA, ...parsedData })
       } catch (error) {
         console.error('Error loading data:', error)
       }
@@ -114,7 +194,10 @@ export const AdminDataProvider = ({ children }) => {
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('admin_data', JSON.stringify(data))
+    localStorage.setItem('website_data', JSON.stringify(data))
+    // Trigger event to notify website components of changes
+    console.log('✅ Admin: Saved to localStorage and triggered websiteDataChanged event', data)
+    window.dispatchEvent(new Event('websiteDataChanged'))
   }, [data])
 
   const updateHero = (heroData) => {

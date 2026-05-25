@@ -8,6 +8,7 @@ import PortfolioCard from '../components/PortfolioCard'
 import TestimonialCard from '../components/TestimonialCard'
 import StatsCard from '../components/StatsCard'
 import ProcessStep from '../components/ProcessStep'
+import { useWebsiteData } from '../context/WebsiteDataContext'
 import {
   Zap,
   Smartphone,
@@ -19,137 +20,20 @@ import {
   Image,
 } from 'lucide-react'
 
-const services = [
-  {
-    icon: TrendingUp,
-    title: 'Digital Marketing',
-    description: 'Comprehensive strategies to grow your brand online',
-  },
-  {
-    icon: Smartphone,
-    title: 'Social Media',
-    description: 'Engaging content that connects with your audience',
-  },
-  {
-    icon: Camera,
-    title: 'Video Editing',
-    description: 'Professional video production and editing services',
-  },
-  {
-    icon: PenTool,
-    title: 'Reel Creation',
-    description: 'Viral-ready reels and short-form content',
-  },
-  {
-    icon: Palette,
-    title: 'Branding',
-    description: 'Complete brand identity and strategy development',
-  },
-  {
-    icon: Code,
-    title: 'Web Design',
-    description: 'Beautiful and functional website design',
-  },
-]
-
-const portfolioItems = [
-  {
-    title: 'Premium Brand Campaign',
-    category: 'Branding',
-    description: 'Award-winning campaign for luxury brand',
-  },
-  {
-    title: 'Social Media Series',
-    category: 'Social Media',
-    description: 'Engaging content series with 2M+ views',
-  },
-  {
-    title: 'Corporate Video',
-    category: 'Video Editing',
-    description: 'Professional corporate video production',
-  },
-  {
-    title: 'Product Photography',
-    category: 'Photography',
-    description: 'High-end product shoot for e-commerce',
-  },
-  {
-    title: 'Animated Explainer',
-    category: 'Animation',
-    description: 'Custom animated explainer video',
-  },
-  {
-    title: 'Digital Campaign',
-    category: 'Marketing',
-    description: '500% ROI digital marketing campaign',
-  },
-]
-
-const testimonials = [
-  {
-    name: 'Sarah Johnson',
-    company: 'TechStart CEO',
-    content:
-      'Delight Graphics transformed our brand presence. Their creativity and professionalism exceeded expectations.',
-    rating: 5,
-  },
-  {
-    name: 'Michael Chen',
-    company: 'Fashion House',
-    content:
-      'The team delivers stunning visuals that resonate with our audience. Highly recommended for premium brands.',
-    rating: 5,
-  },
-  {
-    name: 'Emma Wilson',
-    company: 'Luxury Retail',
-    content:
-      'Outstanding work across all platforms. They understand premium branding like no one else.',
-    rating: 5,
-  },
-]
-
-const stats = [
-  { value: '500', label: 'Projects Completed' },
-  { value: '150', label: 'Happy Clients' },
-  { value: '50M', label: 'Total Reach' },
-  { value: '10', label: 'Years Experience' },
-]
-
-const processSteps = [
-  {
-    number: 1,
-    title: 'Discover',
-    description: 'Understanding your business, goals and audience.',
-  },
-  {
-    number: 2,
-    title: 'Strategy',
-    description: 'Defining creative direction and communication approach.',
-  },
-  {
-    number: 3,
-    title: 'Design',
-    description: 'Transforming ideas into impactful visual concepts.',
-  },
-  {
-    number: 4,
-    title: 'Review',
-    description: 'Refining designs based on feedback and usability.',
-  },
-  {
-    number: 5,
-    title: 'Deliver',
-    description: 'Final files delivered, ready for print or digital use.',
-  },
-  {
-    number: 6,
-    title: 'Support',
-    description: 'Ongoing creative assistance as your brand evolves.',
-  },
-]
+// Icon mapping
+const iconMap = {
+  TrendingUp,
+  Smartphone,
+  Camera,
+  PenTool,
+  Palette,
+  Code,
+  Image,
+  Zap,
+}
 
 export default function Home() {
+  const { data, isLoaded } = useWebsiteData()
   const [displayText, setDisplayText] = useState('')
   const fullText = 'Creative Excellence Meets Digital Innovation'
 
@@ -165,6 +49,48 @@ export default function Home() {
     }, 50)
     return () => clearInterval(interval)
   }, [])
+
+  if (!isLoaded) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const services = data?.services || []
+  const portfolio = data?.portfolio || []
+  const testimonials = data?.testimonials || []
+  const stats = data?.stats || []
+
+  const processSteps = [
+    {
+      number: 1,
+      title: 'Discover',
+      description: 'Understanding your business, goals and audience.',
+    },
+    {
+      number: 2,
+      title: 'Strategy',
+      description: 'Defining creative direction and communication approach.',
+    },
+    {
+      number: 3,
+      title: 'Design',
+      description: 'Transforming ideas into impactful visual concepts.',
+    },
+    {
+      number: 4,
+      title: 'Review',
+      description: 'Refining designs based on feedback and usability.',
+    },
+    {
+      number: 5,
+      title: 'Deliver',
+      description: 'Final files delivered, ready for print or digital use.',
+    },
+    {
+      number: 6,
+      title: 'Support',
+      description: 'Ongoing creative assistance as your brand evolves.',
+    },
+  ]
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -327,10 +253,10 @@ export default function Home() {
           <SectionTitle title="Our Services" subtitle="What We Do" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.slice(0, 4).map((service, index) => (
+            {services.slice(0, 6).map((service, index) => (
               <ServiceCard
                 key={index}
-                icon={service.icon}
+                icon={iconMap[service.icon] || TrendingUp}
                 title={service.title}
                 description={service.description}
                 index={index}
@@ -359,7 +285,7 @@ export default function Home() {
           <SectionTitle title="Featured Portfolio" subtitle="Our Best Work" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {portfolioItems.slice(0, 6).map((item, index) => (
+            {portfolio.slice(0, 6).map((item, index) => (
               <PortfolioCard
                 key={index}
                 title={item.title}
@@ -400,6 +326,7 @@ export default function Home() {
                 company={testimonial.company}
                 content={testimonial.content}
                 rating={testimonial.rating}
+                image={testimonial.image}
                 index={index}
               />
             ))}

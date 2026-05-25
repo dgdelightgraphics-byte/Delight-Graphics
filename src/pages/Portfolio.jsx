@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import PortfolioCard from '../components/PortfolioCard'
+import { useWebsiteData } from '../context/WebsiteDataContext'
 
 const portfolioItems = [
   {
@@ -69,8 +71,14 @@ const portfolioItems = [
 const categories = ['All', 'Branding', 'Social Media', 'Video', 'Photography', 'Animation', 'Web Design', 'Marketing', 'Graphic Design']
 
 export default function Portfolio() {
+  const { data, isLoaded } = useWebsiteData()
   const [activeCategory, setActiveCategory] = useState('All')
 
+  if (!isLoaded) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const portfolioItems = data?.portfolio || []
   const filteredItems = activeCategory === 'All' 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory)
@@ -299,17 +307,19 @@ export default function Portfolio() {
             Let's create something amazing for your brand
           </motion.p>
 
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
-          >
-            Start Your Project
-          </motion.button>
+          <Link to="/contact">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
+            >
+              Start Your Project
+            </motion.button>
+          </Link>
         </div>
       </section>
     </div>

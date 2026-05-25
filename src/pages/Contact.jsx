@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook, ShieldCheck, Clock, Sparkles, Send } from 'lucide-react'
+import { useWebsiteData } from '../context/WebsiteDataContext'
 
 const businessHours = [
   { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM' },
@@ -9,6 +10,7 @@ const businessHours = [
 ]
 
 export default function Contact() {
+  const { data, isLoaded } = useWebsiteData()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +23,13 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState({ message: '', type: '' })
+
+  if (!isLoaded) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const contact = data?.contact || {}
+  const socialMedia = data?.socialMedia || {}
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -119,7 +128,7 @@ export default function Contact() {
 
               {/* Email */}
               <motion.a
-                href="mailto:dgdelightgraphics@gmail.com"
+                href={`mailto:${contact.email || 'contact@delightgraphics.com'}`}
                 whileHover={{ x: 10 }}
                 className="flex items-start gap-6 p-6 rounded-xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all mb-6 group"
               >
@@ -131,13 +140,13 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Email</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">dgdelightgraphics@gmail.com</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">{contact.email}</p>
                 </div>
               </motion.a>
 
               {/* Phone */}
               <motion.a
-                href="tel:+918277251766"
+                href={`tel:${contact.phone || '+1234567890'}`}
                 whileHover={{ x: 10 }}
                 className="flex items-start gap-6 p-6 rounded-xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all mb-6 group"
               >
@@ -149,7 +158,7 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Phone</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">+91-8277251766</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">{contact.phone}</p>
                 </div>
               </motion.a>
 
@@ -166,7 +175,7 @@ export default function Contact() {
                 </motion.div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Address</h3>
-                  <p className="text-text-muted group-hover:text-white transition-colors">Bengaluru, Karnataka</p>
+                  <p className="text-text-muted group-hover:text-white transition-colors">{contact.address}</p>
                 </div>
               </motion.div>
             </div>

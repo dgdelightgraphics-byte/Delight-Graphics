@@ -13,6 +13,9 @@ import Services from './pages/Services'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
 
+// Data Context
+import { WebsiteDataProvider } from './context/WebsiteDataContext'
+
 // Admin imports
 import { AdminAuthProvider } from './admin/context/AdminAuthContext'
 import { AdminDataProvider } from './admin/context/AdminDataContext'
@@ -51,12 +54,13 @@ function App() {
   const toggleTheme = () => setIsDark(!isDark)
 
   return (
-    <AdminAuthProvider>
-      <AdminDataProvider>
-        <Router>
-          <AnimatePresence mode="wait">
-            {isLoading && <LoadingScreen key="loading" />}
-          </AnimatePresence>
+    <WebsiteDataProvider>
+      <AdminAuthProvider>
+        <AdminDataProvider>
+          <Router>
+            <AnimatePresence mode="wait">
+              {isLoading && <LoadingScreen key="loading" />}
+            </AnimatePresence>
           
           {!isLoading && (
             <>
@@ -205,8 +209,9 @@ function App() {
             </>
           )}
         </Router>
-      </AdminDataProvider>
-    </AdminAuthProvider>
+        </AdminDataProvider>
+      </AdminAuthProvider>
+    </WebsiteDataProvider>
   )
 }
 

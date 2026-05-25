@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
+import { useWebsiteData } from '../context/WebsiteDataContext'
 import { Users, Target, Award, Lightbulb } from 'lucide-react'
 
 const coreValues = [
@@ -73,6 +75,14 @@ const teamMembers = [
 ]
 
 export default function About() {
+  const { data, isLoaded } = useWebsiteData()
+
+  if (!isLoaded) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const about = data?.about || {}
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -311,17 +321,19 @@ export default function About() {
             Join hundreds of brands that have transformed with our creative services
           </motion.p>
 
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
-          >
-            Get in Touch
-          </motion.button>
+          <Link to="/contact">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
+            >
+              Get in Touch
+            </motion.button>
+          </Link>
         </div>
       </section>
     </div>

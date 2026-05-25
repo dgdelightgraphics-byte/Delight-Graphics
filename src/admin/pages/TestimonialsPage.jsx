@@ -9,17 +9,18 @@ export const TestimonialsPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [newTestimonial, setNewTestimonial] = useState({
-    clientName: '',
-    review: '',
+    name: '',
+    company: '',
+    content: '',
     rating: 5,
-    photo: '',
+    image: '',
   })
   const [editedTestimonials, setEditedTestimonials] = useState(data.testimonials)
 
   const handleAddTestimonial = () => {
-    if (newTestimonial.clientName.trim() && newTestimonial.review.trim()) {
+    if (newTestimonial.name.trim() && newTestimonial.content.trim()) {
       addTestimonial(newTestimonial)
-      setNewTestimonial({ clientName: '', review: '', rating: 5, photo: '' })
+      setNewTestimonial({ name: '', company: '', content: '', rating: 5, image: '' })
       setIsAdding(false)
     }
   }
@@ -119,14 +120,21 @@ export const TestimonialsPage = () => {
               <input
                 type="text"
                 placeholder="Client Name"
-                value={newTestimonial.clientName}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, clientName: e.target.value })}
+                value={newTestimonial.name}
+                onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
+                className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Company/Title"
+                value={newTestimonial.company}
+                onChange={(e) => setNewTestimonial({ ...newTestimonial, company: e.target.value })}
                 className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
               />
               <textarea
-                placeholder="Review/Testimonial"
-                value={newTestimonial.review}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, review: e.target.value })}
+                placeholder="Testimonial Content"
+                value={newTestimonial.content}
+                onChange={(e) => setNewTestimonial({ ...newTestimonial, content: e.target.value })}
                 className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"
                 rows="3"
               />
@@ -166,15 +174,24 @@ export const TestimonialsPage = () => {
                 <div className="space-y-4">
                   <input
                     type="text"
-                    value={testimonial.clientName}
-                    onChange={(e) => handleTestimonialChange(testimonial.id, 'clientName', e.target.value)}
+                    value={testimonial.name}
+                    onChange={(e) => handleTestimonialChange(testimonial.id, 'name', e.target.value)}
                     className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none"
+                    placeholder="Client Name"
+                  />
+                  <input
+                    type="text"
+                    value={testimonial.company}
+                    onChange={(e) => handleTestimonialChange(testimonial.id, 'company', e.target.value)}
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none"
+                    placeholder="Company/Title"
                   />
                   <textarea
-                    value={testimonial.review}
-                    onChange={(e) => handleTestimonialChange(testimonial.id, 'review', e.target.value)}
+                    value={testimonial.content}
+                    onChange={(e) => handleTestimonialChange(testimonial.id, 'content', e.target.value)}
                     className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none resize-none"
                     rows="2"
+                    placeholder="Testimonial Content"
                   />
                   <select
                     value={testimonial.rating}
@@ -209,10 +226,11 @@ export const TestimonialsPage = () => {
                   </div>
 
                   {/* Review */}
-                  <p className="text-slate-300 text-sm mb-4 italic">"{testimonial.review}"</p>
+                  <p className="text-slate-300 text-sm mb-4 italic">"{testimonial.content}"</p>
 
                   {/* Client Name */}
-                  <p className="font-semibold text-white">— {testimonial.clientName}</p>
+                  <p className="font-semibold text-white">{testimonial.name}</p>
+                  <p className="text-slate-400 text-xs">— {testimonial.company}</p>
                 </>
               )}
             </motion.div>

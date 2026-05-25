@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 
 export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    // Scroll to top on route change
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [location])
 
   useEffect(() => {
     const toggleVisibility = () => {

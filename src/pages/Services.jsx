@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import ServiceCard from '../components/ServiceCard'
 import {
@@ -411,17 +412,19 @@ export default function Services() {
             Ready to Get Started?
           </motion.h2>
 
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
-          >
-            Schedule Consultation
-          </motion.button>
+          <Link to="/contact">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-primary-gradient px-12 py-4 text-xl font-semibold"
+            >
+              Schedule Consultation
+            </motion.button>
+          </Link>
         </div>
       </section>
     </div>
