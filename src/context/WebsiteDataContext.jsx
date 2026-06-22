@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import {
+  subscribeToCollection,
+  subscribeToDocument,
+  getCollectionData,
+  getData,
+} from '../utils/firestoreService'
 
 const WebsiteDataContext = createContext()
 
-// Default data structure
+// Default data structure for website content
 const DEFAULT_DATA = {
   hero: {
     heading: 'Creative Excellence Meets Digital Innovation',
@@ -12,45 +18,48 @@ const DEFAULT_DATA = {
     backgroundEffect: 'gradient',
   },
   about: {
-    description: 'We are Delight Graphics, a premier creative digital agency specializing in delivering exceptional design, development, and marketing solutions that elevate brands.',
-    mission: 'To empower businesses with innovative digital solutions that drive growth and engagement',
-    vision: 'To be the leading creative digital agency transforming brands through exceptional design and strategy',
+    description:
+      'We are Delight Graphics, a premier creative digital agency specializing in delivering exceptional design, development, and marketing solutions that elevate brands.',
+    mission:
+      'To empower businesses with innovative digital solutions that drive growth and engagement',
+    vision:
+      'To be the leading creative digital agency transforming brands through exceptional design and strategy',
     values: ['Innovation', 'Excellence', 'Client-Focused', 'Creative'],
     images: [],
   },
   services: [
     {
-      id: 1,
+      id: '1',
       icon: 'TrendingUp',
       title: 'Digital Marketing',
       description: 'Comprehensive strategies to grow your brand online',
     },
     {
-      id: 2,
+      id: '2',
       icon: 'Smartphone',
       title: 'Social Media',
       description: 'Engaging content that connects with your audience',
     },
     {
-      id: 3,
+      id: '3',
       icon: 'Camera',
       title: 'Video Editing',
       description: 'Professional video production and editing services',
     },
     {
-      id: 4,
+      id: '4',
       icon: 'PenTool',
       title: 'Reel Creation',
       description: 'Viral-ready reels and short-form content',
     },
     {
-      id: 5,
+      id: '5',
       icon: 'Palette',
       title: 'Branding',
       description: 'Complete brand identity and strategy development',
     },
     {
-      id: 6,
+      id: '6',
       icon: 'Code',
       title: 'Web Design',
       description: 'Beautiful and functional website design',
@@ -58,15 +67,7 @@ const DEFAULT_DATA = {
   ],
   portfolio: [
     {
-      id: 1,
-      title: 'Premium Brand Campaign',
-      category: 'Branding',
-      description: 'Award-winning campaign for luxury brand',
-      images: [],
-      featured: true,
-    },
-    {
-      id: 2,
+      id: '1',
       title: 'Social Media Series',
       category: 'Social Media',
       description: 'Engaging content series with 2M+ views',
@@ -74,7 +75,7 @@ const DEFAULT_DATA = {
       featured: true,
     },
     {
-      id: 3,
+      id: '2',
       title: 'Corporate Video',
       category: 'Video Editing',
       description: 'Professional corporate video production',
@@ -82,7 +83,7 @@ const DEFAULT_DATA = {
       featured: true,
     },
     {
-      id: 4,
+      id: '3',
       title: 'Product Photography',
       category: 'Photography',
       description: 'High-end product shoot for e-commerce',
@@ -90,7 +91,7 @@ const DEFAULT_DATA = {
       featured: false,
     },
     {
-      id: 5,
+      id: '4',
       title: 'Animated Explainer',
       category: 'Animation',
       description: 'Custom animated explainer video',
@@ -98,7 +99,7 @@ const DEFAULT_DATA = {
       featured: false,
     },
     {
-      id: 6,
+      id: '5',
       title: 'Digital Campaign',
       category: 'Marketing',
       description: '500% ROI digital marketing campaign',
@@ -108,33 +109,36 @@ const DEFAULT_DATA = {
   ],
   testimonials: [
     {
-      id: 1,
+      id: '1',
       name: 'Sarah Johnson',
       company: 'TechStart CEO',
-      content: 'Delight Graphics transformed our brand presence. Their creativity and professionalism exceeded expectations.',
+      content:
+        'Delight Graphics transformed our brand presence. Their creativity and professionalism exceeded expectations.',
       rating: 5,
       image: '',
     },
     {
-      id: 2,
+      id: '2',
       name: 'Michael Chen',
       company: 'Fashion House',
-      content: 'The team delivers stunning visuals that resonate with our audience. Highly recommended for premium brands.',
+      content:
+        'The team delivers stunning visuals that resonate with our audience. Highly recommended for premium brands.',
       rating: 5,
       image: '',
     },
     {
-      id: 3,
+      id: '3',
       name: 'Emma Wilson',
       company: 'Luxury Retail',
-      content: 'Outstanding work across all platforms. They understand premium branding like no one else.',
+      content:
+        'Outstanding work across all platforms. They understand premium branding like no one else.',
       rating: 5,
       image: '',
     },
   ],
   team: [
     {
-      id: 1,
+      id: '1',
       name: 'Team Member',
       role: 'Creative Director',
       photo: '',
@@ -144,7 +148,7 @@ const DEFAULT_DATA = {
   stats: [
     { value: '500', label: 'Projects Completed' },
     { value: '150', label: 'Happy Clients' },
-    { value: '50M', label: 'Total Reach' },
+    { value: '40+', label: 'Industries' },
     { value: '10', label: 'Years Experience' },
   ],
   contact: {
@@ -165,7 +169,8 @@ const DEFAULT_DATA = {
   settings: {
     darkMode: true,
     seoTitle: 'Delight Graphics | Premium Digital Design & Development',
-    seoDescription: 'Creative digital agency delivering exceptional design and development solutions',
+    seoDescription:
+      'Creative digital agency delivering exceptional design and development solutions',
     favicon: '',
     footerText: '© 2024 Delight Graphics. All rights reserved.',
   },
@@ -175,77 +180,183 @@ const DEFAULT_DATA = {
 export const WebsiteDataProvider = ({ children }) => {
   const [data, setData] = useState(DEFAULT_DATA)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [error, setError] = useState(null)
 
-  // Load data from localStorage on mount
+  const markLoaded = (section) => {
+    setData((prev) => ({ ...prev }))
+    setLoadedSections((prev) => ({ ...prev, [section]: true }))
+  }
+
+  const [loadedSections, setLoadedSections] = useState({
+    settings: false,
+    contact: false,
+    hero: false,
+    about: false,
+    socialMedia: false,
+    team: false,
+    media: false,
+    services: false,
+    portfolio: false,
+    testimonials: false,
+  })
+
   useEffect(() => {
-    const savedData = localStorage.getItem('website_data')
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData)
-        // Merge with defaults to handle new fields
-        setData({ ...DEFAULT_DATA, ...parsedData })
-      } catch (error) {
-        console.error('Error loading data from localStorage:', error)
-        setData(DEFAULT_DATA)
-      }
-    } else {
-      setData(DEFAULT_DATA)
+    if (Object.values(loadedSections).every(Boolean)) {
+      setIsLoaded(true)
     }
-    setIsLoaded(true)
+  }, [loadedSections])
+
+  useEffect(() => {
+    const unsubscribers = []
+
+    const captureError = (section, err) => {
+      console.error(`${section} snapshot error:`, err)
+      setError(err.message || `Realtime update failed for ${section}.`)
+    }
+
+    unsubscribers.push(
+      subscribeToDocument('siteSettings', 'global', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          settings: snapshot ? { ...DEFAULT_DATA.settings, ...snapshot } : DEFAULT_DATA.settings,
+        }))
+        setLoadedSections((prev) => ({ ...prev, settings: true }))
+      }, (err) => captureError('siteSettings', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('contactInfo', 'main', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          contact: snapshot ? { ...DEFAULT_DATA.contact, ...snapshot } : DEFAULT_DATA.contact,
+        }))
+        setLoadedSections((prev) => ({ ...prev, contact: true }))
+      }, (err) => captureError('contactInfo', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('homepageContent', 'hero', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          hero: snapshot ? { ...DEFAULT_DATA.hero, ...snapshot } : DEFAULT_DATA.hero,
+        }))
+        setLoadedSections((prev) => ({ ...prev, hero: true }))
+      }, (err) => captureError('hero', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('homepageContent', 'about', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          about: snapshot ? { ...DEFAULT_DATA.about, ...snapshot } : DEFAULT_DATA.about,
+        }))
+        setLoadedSections((prev) => ({ ...prev, about: true }))
+      }, (err) => captureError('about', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('homepageContent', 'socialMedia', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          socialMedia: snapshot
+            ? { ...DEFAULT_DATA.socialMedia, ...snapshot }
+            : DEFAULT_DATA.socialMedia,
+        }))
+        setLoadedSections((prev) => ({ ...prev, socialMedia: true }))
+      }, (err) => captureError('socialMedia', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('homepageContent', 'team', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          team: snapshot?.members?.length ? snapshot.members : DEFAULT_DATA.team,
+        }))
+        setLoadedSections((prev) => ({ ...prev, team: true }))
+      }, (err) => captureError('team', err))
+    )
+
+    unsubscribers.push(
+      subscribeToDocument('homepageContent', 'media', (snapshot) => {
+        setData((prev) => ({
+          ...prev,
+          media: snapshot?.items?.length ? snapshot.items : DEFAULT_DATA.media,
+        }))
+        setLoadedSections((prev) => ({ ...prev, media: true }))
+      }, (err) => captureError('media', err))
+    )
+
+    unsubscribers.push(
+      subscribeToCollection('services', (items) => {
+        setData((prev) => ({
+          ...prev,
+          services: items.length ? items : DEFAULT_DATA.services,
+        }))
+        setLoadedSections((prev) => ({ ...prev, services: true }))
+      }, (err) => captureError('services', err))
+    )
+
+    unsubscribers.push(
+      subscribeToCollection('portfolio', (items) => {
+        setData((prev) => ({
+          ...prev,
+          portfolio: items.length ? items : DEFAULT_DATA.portfolio,
+        }))
+        setLoadedSections((prev) => ({ ...prev, portfolio: true }))
+      }, (err) => captureError('portfolio', err))
+    )
+
+    unsubscribers.push(
+      subscribeToCollection('testimonials', (items) => {
+        setData((prev) => ({
+          ...prev,
+          testimonials: items.length ? items : DEFAULT_DATA.testimonials,
+        }))
+        setLoadedSections((prev) => ({ ...prev, testimonials: true }))
+      }, (err) => captureError('testimonials', err))
+    )
+
+    return () => unsubscribers.forEach((unsubscribe) => unsubscribe())
   }, [])
 
-  // Save data to localStorage whenever it changes (only if loaded)
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('website_data', JSON.stringify(data))
-      // Trigger storage event for other tabs/components
-      window.dispatchEvent(new Event('websiteDataChanged'))
+  const refreshData = async () => {
+    try {
+      const [settings, contact, hero, about, socialMedia, team, media, services, portfolio, testimonials] = await Promise.all([
+        getData('siteSettings', 'global'),
+        getData('contactInfo', 'main'),
+        getData('homepageContent', 'hero'),
+        getData('homepageContent', 'about'),
+        getData('homepageContent', 'socialMedia'),
+        getData('homepageContent', 'team'),
+        getData('homepageContent', 'media'),
+        getCollectionData('services'),
+        getCollectionData('portfolio'),
+        getCollectionData('testimonials'),
+      ])
+
+      setData({
+        hero: hero ? { ...DEFAULT_DATA.hero, ...hero } : DEFAULT_DATA.hero,
+        about: about ? { ...DEFAULT_DATA.about, ...about } : DEFAULT_DATA.about,
+        services: services.length ? services : DEFAULT_DATA.services,
+        portfolio: portfolio.length ? portfolio : DEFAULT_DATA.portfolio,
+        testimonials: testimonials.length ? testimonials : DEFAULT_DATA.testimonials,
+        team: team?.members?.length ? team.members : DEFAULT_DATA.team,
+        contact: contact ? { ...DEFAULT_DATA.contact, ...contact } : DEFAULT_DATA.contact,
+        socialMedia: socialMedia
+          ? { ...DEFAULT_DATA.socialMedia, ...socialMedia }
+          : DEFAULT_DATA.socialMedia,
+        settings: settings ? { ...DEFAULT_DATA.settings, ...settings } : DEFAULT_DATA.settings,
+        media: media?.items?.length ? media.items : DEFAULT_DATA.media,
+        stats: DEFAULT_DATA.stats,
+      })
+    } catch (err) {
+      console.error('Refresh data failed:', err)
+      setError(err.message || 'Unable to refresh website content.')
     }
-  }, [data, isLoaded])
-
-  // Listen for storage changes from other tabs
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === 'website_data' && e.newValue) {
-        try {
-          setData(JSON.parse(e.newValue))
-        } catch (error) {
-          console.error('Error updating data from storage:', error)
-        }
-      }
-    }
-
-    const handleWebsiteDataChanged = () => {
-      const savedData = localStorage.getItem('website_data')
-      if (savedData) {
-        try {
-          const newData = JSON.parse(savedData)
-          console.log('🔄 Website: websiteDataChanged event received, updating data', newData)
-          setData(newData)
-        } catch (error) {
-          console.error('Error updating data:', error)
-        }
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('websiteDataChanged', handleWebsiteDataChanged)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('websiteDataChanged', handleWebsiteDataChanged)
-    }
-  }, [])
-
-  const updateData = (section, newValue) => {
-    setData((prev) => ({
-      ...prev,
-      [section]: typeof newValue === 'object' ? { ...prev[section], ...newValue } : newValue,
-    }))
   }
 
   return (
-    <WebsiteDataContext.Provider value={{ data, updateData, isLoaded }}>
+    <WebsiteDataContext.Provider value={{ data, isLoaded, error, refreshData }}>
       {children}
     </WebsiteDataContext.Provider>
   )

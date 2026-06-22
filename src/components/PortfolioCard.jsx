@@ -29,13 +29,16 @@ export default function PortfolioCard({ title, category, image, description, ind
     >
       {/* Background Image Placeholder */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${
-          index % 3 === 0
-            ? 'from-primary-500 to-secondary-500'
-            : index % 3 === 1
-              ? 'from-secondary-500 to-primary-600'
-              : 'from-primary-600 to-secondary-400'
-        } transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
+        className={`absolute inset-0 transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'} ${
+          image
+            ? 'bg-cover bg-center'
+            : index % 3 === 0
+              ? 'bg-gradient-to-br from-primary-500 to-secondary-500'
+              : index % 3 === 1
+                ? 'bg-gradient-to-br from-secondary-500 to-primary-600'
+                : 'bg-gradient-to-br from-primary-600 to-secondary-400'
+        }`}
+        style={image ? { backgroundImage: `url('${image}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
       />
 
       {/* Overlay */}

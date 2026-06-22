@@ -1,4 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { auth } from '../../config/firebase'
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from 'firebase/auth'
 
 const AdminAuthContext = createContext()
 
@@ -6,49 +12,46 @@ export const AdminAuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [adminUser, setAdminUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // Admin credentials loaded from environment variables
-  const ADMIN_CREDENTIALS = {
-    username: import.meta.env.VITE_ADMIN_USERNAME || '',
-    password: import.meta.env.VITE_ADMIN_PASSWORD || '',
-  }
-
-  // Check for existing session on mount
   useEffect(() => {
-    const sessionData = localStorage.getItem('admin_session')
-    if (sessionData) {
-      try {
-        const user = JSON.parse(sessionData)
-        setAdminUser(user)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAdminUser({ uid: user.uid, email: user.email })
         setIsAuthenticated(true)
-      } catch (error) {
-        localStorage.removeItem('admin_session')
+      } else {
+        setAdminUser(null)
+        setIsAuthenticated(false)
       }
-    }
-    setLoading(false)
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
   }, [])
 
-  const login = (username, password) => {
-    if (
-      username === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
-    ) {
-      const user = {
-        username,
-        loginTime: new Date().toISOString(),
-      }
-      setAdminUser(user)
+  const login = async (email, password) => {
+    setError(null)
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+      setAdminUser({ uid: user.uid, email: user.email })
       setIsAuthenticated(true)
-      localStorage.setItem('admin_session', JSON.stringify(user))
       return { success: true }
+    } catch (err) {
+      const message = err?.message || 'Login failed. Check your credentials.'
+      setError(message)
+      return { success: false, error: message }
     }
-    return { success: false, error: 'Invalid credentials' }
   }
 
-  const logout = () => {
-    setAdminUser(null)
-    setIsAuthenticated(false)
-    localStorage.removeItem('admin_session')
+  const logout = async () => {
+    try {
+      await signOut(auth)
+      setAdminUser(null)
+      setIsAuthenticated(false)
+    } catch (err) {
+      console.error('Logout error:', err)
+    }
   }
 
   return (
@@ -57,6 +60,7 @@ export const AdminAuthProvider = ({ children }) => {
         isAuthenticated,
         adminUser,
         loading,
+        error,
         login,
         logout,
       }}

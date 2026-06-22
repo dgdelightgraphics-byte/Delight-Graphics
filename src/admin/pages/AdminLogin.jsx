@@ -5,7 +5,7 @@ import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { useAdminAuth } from '../context/AdminAuthContext'
 
 export const AdminLogin = () => {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -19,16 +19,13 @@ export const AdminLogin = () => {
     setError('')
     setLoading(true)
 
-    // Simulate API call delay
-    setTimeout(() => {
-      const result = login(username, password)
-      if (result.success) {
-        navigate('/admin/dashboard')
-      } else {
-        setError(result.error)
-      }
-      setLoading(false)
-    }, 500)
+    const result = await login(email, password)
+    if (result.success) {
+      navigate('/admin/dashboard')
+    } else {
+      setError(result.error)
+    }
+    setLoading(false)
   }
 
   const containerVariants = {
@@ -103,18 +100,16 @@ export const AdminLogin = () => {
 
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4 mb-6">
-            {/* Username Field */}
+            {/* Email Field */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-slate-500" size={20} />
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your admin email"
                   className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:bg-slate-700 focus:outline-none transition-colors"
                 />
               </div>
@@ -122,9 +117,7 @@ export const AdminLogin = () => {
 
             {/* Password Field */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-slate-500" size={20} />
                 <input
@@ -159,10 +152,7 @@ export const AdminLogin = () => {
         </motion.div>
 
         {/* Footer */}
-        <motion.p
-          variants={itemVariants}
-          className="text-center text-slate-500 text-sm mt-6"
-        >
+        <motion.p variants={itemVariants} className="text-center text-slate-500 text-sm mt-6">
           © 2024 Delight Graphics. Secure Admin Dashboard.
         </motion.p>
       </motion.div>

@@ -168,6 +168,7 @@ export default function Portfolio() {
                   title={item.title}
                   category={item.category}
                   description={item.description}
+                  image={item.image || item.images?.[0]}
                   index={index}
                 />
               ))}

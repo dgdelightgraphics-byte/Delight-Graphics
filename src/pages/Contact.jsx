@@ -232,6 +232,7 @@ export default function Contact() {
 
           {/* Contact Form */}
           <motion.div
+            id="contact-form"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -453,8 +454,8 @@ export default function Contact() {
                 answer: 'Most projects take 2-6 weeks depending on scope and complexity. We provide detailed timelines during consultation.',
               },
               {
-                question: 'Do you offer package discounts?',
-                answer: 'Yes! We offer customized packages with flexible pricing for multiple services. Contact us for details.',
+                question: 'Do you offer customized creative packages?',
+                answer: 'Yes! We tailor each project to your brand goals, scope, and creative direction. Contact us to discuss the best fit.',
               },
               {
                 question: 'How do we get started?',
@@ -462,7 +463,7 @@ export default function Contact() {
               },
               {
                 question: 'Do you provide unlimited revisions?',
-                answer: 'Our Professional and Enterprise plans include unlimited revisions. Starter plan includes 2 revisions.',
+                answer: 'Our premium packages include revision support throughout the project timeline, with scope tailored to your creative requirements.',
               },
             ].map((item, index) => (
               <motion.div
