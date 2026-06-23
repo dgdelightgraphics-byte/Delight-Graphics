@@ -179,13 +179,8 @@ const DEFAULT_DATA = {
 
 export const WebsiteDataProvider = ({ children }) => {
   const [data, setData] = useState(DEFAULT_DATA)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(true)
   const [error, setError] = useState(null)
-
-  const markLoaded = (section) => {
-    setData((prev) => ({ ...prev }))
-    setLoadedSections((prev) => ({ ...prev, [section]: true }))
-  }
 
   const [loadedSections, setLoadedSections] = useState({
     settings: false,
