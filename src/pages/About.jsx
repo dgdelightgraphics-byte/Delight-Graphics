@@ -51,29 +51,6 @@ const timeline = [
   },
 ]
 
-const teamMembers = [
-  {
-    name: 'Alex Morgan',
-    role: 'Creative Director',
-    specialty: 'Brand Strategy & Design',
-  },
-  {
-    name: 'Jordan Chen',
-    role: 'Video Producer',
-    specialty: 'Content Creation & Editing',
-  },
-  {
-    name: 'Priya Sharma',
-    role: 'Digital Strategist',
-    specialty: 'Marketing & SEO',
-  },
-  {
-    name: 'Marcus Davis',
-    role: 'UI/UX Designer',
-    specialty: 'Web & App Design',
-  },
-]
-
 export default function About() {
   const { data, isLoaded } = useWebsiteData()
 
@@ -82,6 +59,7 @@ export default function About() {
   }
 
   const about = data?.about || {}
+  const teamMembers = data?.team || []
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Edit, Save, X, Plus, Trash2 } from 'lucide-react'
+import { Edit, Save, X, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react'
 import { useAdminData } from '../context/AdminDataContext'
 import { AdminLayout } from './AdminLayout'
 
@@ -16,12 +16,61 @@ export const PortfolioPage = () => {
     images: [],
   })
   const [editedPortfolio, setEditedPortfolio] = useState(data.portfolio)
+  const [selectedItemForImage, setSelectedItemForImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
 
   const handleAddItem = () => {
     if (newItem.title.trim()) {
       addPortfolioItem(newItem)
       setNewItem({ title: '', description: '', category: 'Web Design', featured: false, images: [] })
       setIsAdding(false)
+    }
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64 = reader.result
+        setImagePreview(base64)
+        // For new item
+        if (selectedItemForImage === 'new') {
+          setNewItem({
+            ...newItem,
+            images: [...(newItem.images || []), base64],
+          })
+        } else if (selectedItemForImage) {
+          // For editing existing item
+          setEditedPortfolio((prev) =>
+            prev.map((item) =>
+              item.id === selectedItemForImage
+                ? { ...item, images: [...(item.images || []), base64] }
+                : item
+            )
+          )
+        }
+        setImagePreview('')
+        setSelectedItemForImage(null)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeImage = (itemId, imageIndex) => {
+    if (itemId === 'new') {
+      setNewItem({
+        ...newItem,
+        images: newItem.images.filter((_, i) => i !== imageIndex),
+      })
+    } else {
+      setEditedPortfolio((prev) =>
+        prev.map((item) =>
+          item.id === itemId
+            ? { ...item, images: item.images.filter((_, i) => i !== imageIndex) }
+            : item
+        )
+      )
     }
   }
 
@@ -43,7 +92,7 @@ export const PortfolioPage = () => {
     )
   }
 
-  const categories = ['Web Design', 'Web Development', 'Branding', 'UI/UX', 'Photography']
+  const categories = ['Web Design', 'Web Development', 'Branding', 'UI/UX', 'Photography', 'Social Media', 'Video Editing', 'Animation']
 
   return (
     <AdminLayout>
@@ -144,6 +193,50 @@ export const PortfolioPage = () => {
                   </option>
                 ))}
               </select>
+
+              {/* Image Upload Section */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-2">Project Images</label>
+                <motion.label
+                  whileHover={{ borderColor: '#60a5fa' }}
+                  className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center cursor-pointer hover:bg-slate-700/20 transition-colors block"
+                >
+                  <Upload size={24} className="mx-auto text-slate-400 mb-2" />
+                  <p className="text-slate-300 text-sm font-semibold">Click to upload images</p>
+                  <p className="text-slate-500 text-xs">PNG, JPG, GIF (Max 5MB each)</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      setSelectedItemForImage('new')
+                      handleImageChange(e)
+                    }}
+                    className="hidden"
+                  />
+                </motion.label>
+
+                {/* Image Thumbnails */}
+                {newItem.images && newItem.images.length > 0 && (
+                  <div className="mt-4 grid grid-cols-4 gap-3">
+                    {newItem.images.map((image, idx) => (
+                      <div key={idx} className="relative group">
+                        <img
+                          src={image}
+                          alt={`Preview ${idx}`}
+                          className="w-full h-20 object-cover rounded-lg border border-slate-600"
+                        />
+                        <button
+                          onClick={() => removeImage('new', idx)}
+                          className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X size={12} className="text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <label className="flex items-center gap-3 text-white cursor-pointer">
                 <input
                   type="checkbox"
@@ -174,9 +267,50 @@ export const PortfolioPage = () => {
               whileHover={{ y: -5 }}
               className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 rounded-xl overflow-hidden backdrop-blur-xl"
             >
-              {/* Image Placeholder */}
-              <div className="h-48 bg-gradient-to-br from-blue-600/20 to-purple-600/20 flex items-center justify-center text-slate-400">
-                [Project Image]
+              {/* Image Section */}
+              <div className="relative h-48 bg-gradient-to-br from-blue-600/20 to-purple-600/20 flex items-center justify-center overflow-hidden group">
+                {item.images && item.images.length > 0 ? (
+                  <div className="relative w-full h-full">
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {item.images.length > 1 && (
+                      <div className="absolute bottom-2 right-2 bg-black/50 px-2 py-1 rounded text-white text-xs">
+                        +{item.images.length - 1}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-slate-400">
+                    <ImageIcon size={32} className="mb-2" />
+                    <span className="text-sm">No Image</span>
+                  </div>
+                )}
+
+                {/* Upload Button on Hover */}
+                {isEditing && (
+                  <motion.label
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"
+                  >
+                    <div className="text-center">
+                      <Upload size={24} className="mx-auto text-white mb-2" />
+                      <p className="text-white text-sm font-semibold">Add Image</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        setSelectedItemForImage(item.id)
+                        handleImageChange(e)
+                      }}
+                      className="hidden"
+                    />
+                  </motion.label>
+                )}
               </div>
 
               {/* Content */}
@@ -206,6 +340,34 @@ export const PortfolioPage = () => {
                         </option>
                       ))}
                     </select>
+
+                    {/* Image Gallery */}
+                    {item.images && item.images.length > 0 && (
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-300 mb-2">
+                          Images ({item.images.length})
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {item.images.map((image, imgIdx) => (
+                            <div key={imgIdx} className="relative group">
+                              <img
+                                src={image}
+                                alt={`Preview ${imgIdx}`}
+                                className="w-full h-16 object-cover rounded border border-slate-600"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(item.id, imgIdx)}
+                                className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X size={12} className="text-white" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
                       <input
                         type="checkbox"
@@ -236,6 +398,9 @@ export const PortfolioPage = () => {
                       <span className="px-3 py-1 bg-slate-700/50 border border-slate-600/50 text-slate-300 rounded-full text-xs">
                         {item.category}
                       </span>
+                      {item.images && item.images.length > 0 && (
+                        <span className="text-xs text-slate-400">{item.images.length} image(s)</span>
+                      )}
                     </div>
                   </>
                 )}

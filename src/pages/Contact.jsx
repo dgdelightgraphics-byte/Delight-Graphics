@@ -3,12 +3,6 @@ import { motion } from 'framer-motion'
 import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook, ShieldCheck, Clock, Sparkles, Send } from 'lucide-react'
 import { useWebsiteData } from '../context/WebsiteDataContext'
 
-const businessHours = [
-  { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM' },
-  { day: 'Saturday', time: '10:00 AM - 4:00 PM' },
-  { day: 'Sunday', time: 'Closed' },
-]
-
 export default function Contact() {
   const { data, isLoaded } = useWebsiteData()
   const [formData, setFormData] = useState({
@@ -30,6 +24,13 @@ export default function Contact() {
 
   const contact = data?.contact || {}
   const socialMedia = data?.socialMedia || {}
+
+  // Default business hours
+  const businessHours = contact.businessHours || [
+    { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM' },
+    { day: 'Saturday', time: '10:00 AM - 4:00 PM' },
+    { day: 'Sunday', time: 'Closed' },
+  ]
 
   const handleChange = (e) => {
     const { name, value } = e.target

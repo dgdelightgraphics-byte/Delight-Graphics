@@ -162,6 +162,35 @@ export const ContactPage = () => {
                 )}
               </div>
 
+              {/* Business Hours */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-300 mb-2">
+                  Business Hours (JSON format)
+                </label>
+                {isEditing ? (
+                  <textarea
+                    value={formData.businessHours ? JSON.stringify(formData.businessHours, null, 2) : '[]'}
+                    onChange={(e) => {
+                      try {
+                        const hours = JSON.parse(e.target.value)
+                        handleChange('businessHours', hours)
+                      } catch (err) {
+                        // Invalid JSON, let user continue typing
+                      }
+                    }}
+                    placeholder='[{"day":"Monday - Friday","time":"9:00 AM - 6:00 PM"}]'
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none text-xs font-mono"
+                    rows="3"
+                  />
+                ) : (
+                  <p className="text-slate-300 text-sm">
+                    {formData.businessHours && formData.businessHours.length > 0
+                      ? `${formData.businessHours.length} working hours configured`
+                      : 'No business hours configured'}
+                  </p>
+                )}
+              </div>
+
               {isEditing && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
