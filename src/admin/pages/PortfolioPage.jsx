@@ -16,8 +16,7 @@ export const PortfolioPage = () => {
     images: [],
   })
   const [editedPortfolio, setEditedPortfolio] = useState(data.portfolio)
-  const [selectedItemForImage, setSelectedItemForImage] = useState(null)
-  const [imagePreview, setImagePreview] = useState('')
+  const [dragTarget, setDragTarget] = useState(null)
 
   const handleAddItem = () => {
     if (newItem.title.trim()) {
@@ -27,51 +26,72 @@ export const PortfolioPage = () => {
     }
   }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const base64 = reader.result
-        setImagePreview(base64)
-        // For new item
-        if (selectedItemForImage === 'new') {
-          setNewItem({
-            ...newItem,
-            images: [...(newItem.images || []), base64],
-          })
-        } else if (selectedItemForImage) {
-          // For editing existing item
-          setEditedPortfolio((prev) =>
-            prev.map((item) =>
-              item.id === selectedItemForImage
-                ? { ...item, images: [...(item.images || []), base64] }
-                : item
-            )
+  const addImagesToItem = async (itemId, files) => {
+    const imageFiles = Array.from(files || []).filter((file) => file.type.startsWith('image/'))
+    if (!imageFiles.length) return
+
+    const imagePromises = imageFiles.map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result)
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+    )
+
+    try {
+      const base64Images = await Promise.all(imagePromises)
+      if (itemId === 'new') {
+        setNewItem((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), ...base64Images],
+        }))
+      } else {
+        setEditedPortfolio((prev) =>
+          prev.map((item) =>
+            item.id === itemId
+              ? { ...item, images: [...(item.images || []), ...base64Images] }
+              : item
           )
-        }
-        setImagePreview('')
-        setSelectedItemForImage(null)
+        )
       }
-      reader.readAsDataURL(file)
+    } catch (err) {
+      console.error('Image upload failed:', err)
     }
   }
 
   const removeImage = (itemId, imageIndex) => {
     if (itemId === 'new') {
-      setNewItem({
-        ...newItem,
-        images: newItem.images.filter((_, i) => i !== imageIndex),
-      })
+      setNewItem((prev) => ({
+        ...prev,
+        images: (prev.images || []).filter((_, i) => i !== imageIndex),
+      }))
     } else {
       setEditedPortfolio((prev) =>
         prev.map((item) =>
           item.id === itemId
-            ? { ...item, images: item.images.filter((_, i) => i !== imageIndex) }
+            ? { ...item, images: (item.images || []).filter((_, i) => i !== imageIndex) }
             : item
         )
       )
     }
+  }
+
+  const handleDragOver = (e, itemId) => {
+    e.preventDefault()
+    setDragTarget(itemId)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setDragTarget(null)
+  }
+
+  const handleDrop = (e, itemId) => {
+    e.preventDefault()
+    setDragTarget(null)
+    addImagesToItem(itemId, e.dataTransfer.files)
   }
 
   const handleSave = () => {
@@ -200,17 +220,18 @@ export const PortfolioPage = () => {
                 <motion.label
                   whileHover={{ borderColor: '#60a5fa' }}
                   className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center cursor-pointer hover:bg-slate-700/20 transition-colors block"
+                  onDragOver={(e) => handleDragOver(e, 'new')}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, 'new')}
                 >
                   <Upload size={24} className="mx-auto text-slate-400 mb-2" />
-                  <p className="text-slate-300 text-sm font-semibold">Click to upload images</p>
+                  <p className="text-slate-300 text-sm font-semibold">Click or drop images here</p>
                   <p className="text-slate-500 text-xs">PNG, JPG, GIF (Max 5MB each)</p>
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      setSelectedItemForImage('new')
-                      handleImageChange(e)
-                    }}
+                    multiple
+                    onChange={(e) => addImagesToItem('new', e.target.files)}
                     className="hidden"
                   />
                 </motion.label>
@@ -294,7 +315,10 @@ export const PortfolioPage = () => {
                   <motion.label
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
-                    className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"
+                    className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-colors ${dragTarget === item.id ? 'bg-blue-600/30' : 'bg-black/50'}`}
+                    onDragOver={(e) => handleDragOver(e, item.id)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, item.id)}
                   >
                     <div className="text-center">
                       <Upload size={24} className="mx-auto text-white mb-2" />
@@ -303,10 +327,8 @@ export const PortfolioPage = () => {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
-                        setSelectedItemForImage(item.id)
-                        handleImageChange(e)
-                      }}
+                      multiple
+                      onChange={(e) => addImagesToItem(item.id, e.target.files)}
                       className="hidden"
                     />
                   </motion.label>
