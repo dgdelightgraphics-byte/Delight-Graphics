@@ -1,8 +1,15 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Edit, Save, X, Plus, Trash2, Star } from 'lucide-react'
+import { Edit, Save, X, Plus, Trash2, Star, Upload, Image as ImageIcon } from 'lucide-react'
 import { useAdminData } from '../context/AdminDataContext'
 import { AdminLayout } from './AdminLayout'
+import {
+  ALLOWED_TESTIMONIAL_IMAGE_TYPES,
+  MAX_TESTIMONIAL_IMAGE_SIZE_BYTES,
+  deleteCloudinaryImage,
+  uploadImageToCloudinary,
+  validateImageUpload,
+} from '../../utils/cloudinaryService'
 
 export const TestimonialsPage = () => {
   const { data, addTestimonial, deleteTestimonial, updateTestimonials } = useAdminData()
@@ -14,19 +21,84 @@ export const TestimonialsPage = () => {
     content: '',
     rating: 5,
     image: '',
+    clientImage: '',
   })
   const [editedTestimonials, setEditedTestimonials] = useState(data.testimonials)
+  const [uploadingState, setUploadingState] = useState({
+    type: 'idle',
+    progress: 0,
+    message: '',
+  })
+  const [selectedImagePreview, setSelectedImagePreview] = useState('')
+  const [selectedFileName, setSelectedFileName] = useState('')
+  const [uploadingTestimonialId, setUploadingTestimonialId] = useState(null)
 
-  const handleAddTestimonial = () => {
+  const acceptedTypesLabel = useMemo(() => ALLOWED_TESTIMONIAL_IMAGE_TYPES.map((type) => type.split('/')[1].toUpperCase()).join(', '), [])
+
+  const resetUploadState = () => {
+    setUploadingState({ type: 'idle', progress: 0, message: '' })
+    setSelectedImagePreview('')
+    setSelectedFileName('')
+    setUploadingTestimonialId(null)
+  }
+
+  const handleImageSelection = async (event, target, isNew = false) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const validation = validateImageUpload(file)
+    if (!validation.valid) {
+      setUploadingState({ type: 'error', progress: 0, message: validation.error })
+      return
+    }
+
+    const previewUrl = URL.createObjectURL(file)
+    if (isNew) {
+      setSelectedImagePreview(previewUrl)
+      setSelectedFileName(file.name)
+    }
+
+    const nextState = isNew ? { ...newTestimonial, clientImage: '' } : target
+    setUploadingState({ type: 'uploading', progress: 0, message: 'Uploading image...' })
+    if (isNew) {
+      setNewTestimonial(nextState)
+    } else {
+      handleTestimonialChange(target.id, 'clientImage', '')
+    }
+
+    try {
+      const url = await uploadImageToCloudinary(file, 'testimonials', (percent) => {
+        setUploadingState({ type: 'uploading', progress: percent, message: 'Uploading image...' })
+      })
+
+      if (isNew) {
+        setNewTestimonial((prev) => ({ ...prev, clientImage: url }))
+      } else {
+        handleTestimonialChange(target.id, 'clientImage', url)
+      }
+
+      setUploadingState({ type: 'success', progress: 100, message: 'Image uploaded successfully.' })
+    } catch (error) {
+      if (isNew) {
+        setNewTestimonial((prev) => ({ ...prev, clientImage: '' }))
+      } else {
+        handleTestimonialChange(target.id, 'clientImage', '')
+      }
+      setUploadingState({ type: 'error', progress: 0, message: error.message || 'Image upload failed.' })
+    }
+  }
+
+  const handleAddTestimonial = async () => {
     if (newTestimonial.name.trim() && newTestimonial.content.trim()) {
-      addTestimonial(newTestimonial)
-      setNewTestimonial({ name: '', company: '', content: '', rating: 5, image: '' })
+      await addTestimonial({ ...newTestimonial, image: newTestimonial.clientImage || '' })
+      setNewTestimonial({ name: '', company: '', content: '', rating: 5, image: '', clientImage: '' })
+      resetUploadState()
       setIsAdding(false)
     }
   }
 
-  const handleSave = () => {
-    updateTestimonials(editedTestimonials)
+  const handleSave = async () => {
+    await updateTestimonials(editedTestimonials)
     setIsEditing(false)
   }
 
@@ -41,6 +113,21 @@ export const TestimonialsPage = () => {
         testimonial.id === id ? { ...testimonial, [field]: value } : testimonial
       )
     )
+  }
+
+  const handleRemoveImage = async (testimonial) => {
+    if (testimonial.clientImage) {
+      await deleteCloudinaryImage(testimonial.clientImage)
+    }
+    handleTestimonialChange(testimonial.id, 'clientImage', '')
+    handleTestimonialChange(testimonial.id, 'image', '')
+  }
+
+  const handleDeleteTestimonial = async (testimonial) => {
+    if (testimonial.clientImage) {
+      await deleteCloudinaryImage(testimonial.clientImage)
+    }
+    await deleteTestimonial(testimonial.id)
   }
 
   return (
@@ -149,6 +236,44 @@ export const TestimonialsPage = () => {
                   </option>
                 ))}
               </select>
+              <div className="rounded-lg border border-slate-600 bg-slate-700/30 p-4">
+                <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200">
+                  <ImageIcon size={16} /> Client Image
+                </label>
+                <p className="mb-3 text-xs text-slate-400">
+                  JPG, JPEG, PNG, WEBP up to 2MB. {acceptedTypesLabel}
+                </p>
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-500 bg-slate-800/50 px-4 py-3 text-sm text-slate-300 transition hover:border-blue-400 hover:text-white">
+                  <Upload size={16} />
+                  Choose Image
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className="hidden"
+                    onChange={(e) => handleImageSelection(e, newTestimonial, true)}
+                  />
+                </label>
+                {uploadingState.message && (
+                  <p className={`mt-2 text-sm ${uploadingState.type === 'error' ? 'text-red-300' : 'text-emerald-300'}`}>
+                    {uploadingState.message}
+                  </p>
+                )}
+                {uploadingState.type === 'uploading' && (
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${uploadingState.progress}%` }} />
+                  </div>
+                )}
+                {(selectedImagePreview || newTestimonial.clientImage) && (
+                  <div className="mt-4 flex items-center gap-3">
+                    <img
+                      src={selectedImagePreview || newTestimonial.clientImage}
+                      alt="Preview"
+                      className="h-16 w-16 rounded-full border border-white/70 object-cover shadow-lg"
+                    />
+                    <span className="text-sm text-slate-300">{selectedFileName || 'Uploaded image'}</span>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={handleAddTestimonial}
                 className="w-full px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all"
@@ -204,8 +329,38 @@ export const TestimonialsPage = () => {
                       </option>
                     ))}
                   </select>
+                  <div className="rounded-lg border border-slate-600 bg-slate-700/30 p-3">
+                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200">
+                      <ImageIcon size={14} /> Client Image
+                    </label>
+                    <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-500 bg-slate-800/50 px-3 py-2 text-sm text-slate-300 transition hover:border-blue-400 hover:text-white">
+                      <Upload size={14} />
+                      {testimonial.clientImage ? 'Replace Image' : 'Upload Image'}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={(e) => handleImageSelection(e, testimonial)}
+                      />
+                    </label>
+                    {testimonial.clientImage && (
+                      <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-slate-800/70 p-2">
+                        <div className="flex items-center gap-3">
+                          <img src={testimonial.clientImage || testimonial.image} alt={testimonial.name} className="h-12 w-12 rounded-full border border-white/70 object-cover shadow-md" />
+                          <span className="text-xs text-slate-300">Current image</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(testimonial)}
+                          className="text-xs text-red-300 hover:text-red-200"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <button
-                    onClick={() => deleteTestimonial(testimonial.id)}
+                    onClick={() => handleDeleteTestimonial(testimonial)}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
                   >
                     <Trash2 size={14} />

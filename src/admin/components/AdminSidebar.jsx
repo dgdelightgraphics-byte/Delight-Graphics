@@ -14,6 +14,8 @@ import {
   Settings,
   Upload,
   LogOut,
+  Play,
+  Sparkles,
 } from 'lucide-react'
 import { useAdminAuth } from '../context/AdminAuthContext'
 
@@ -43,9 +45,21 @@ const menuItems = [
     category: 'content',
   },
   {
+    title: 'Promotional Offers',
+    icon: Sparkles,
+    path: '/admin/promotional-offers',
+    category: 'content',
+  },
+  {
     title: 'Portfolio',
     icon: ImageIcon,
     path: '/admin/portfolio',
+    category: 'content',
+  },
+  {
+    title: 'Portfolio Video Showcase',
+    icon: Play,
+    path: '/admin/portfolio-video-showcase',
     category: 'content',
   },
   {

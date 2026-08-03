@@ -8,6 +8,7 @@ import {
   createData,
   deleteData,
 } from '../../utils/firestoreService'
+import { deleteCloudinaryImage } from '../../utils/cloudinaryService'
 
 const AdminDataContext = createContext()
 
@@ -26,44 +27,8 @@ const DEFAULT_DATA = {
     vision: 'To be the leading digital creative agency',
     images: [],
   },
-  services: [
-    {
-      id: '1',
-      icon: 'TrendingUp',
-      title: 'Digital Marketing',
-      description: 'Comprehensive strategies to grow your brand online',
-    },
-    {
-      id: '2',
-      icon: 'Smartphone',
-      title: 'Social Media',
-      description: 'Engaging content that connects with your audience',
-    },
-    {
-      id: '3',
-      icon: 'Camera',
-      title: 'Video Editing',
-      description: 'Professional video production and editing services',
-    },
-    {
-      id: '4',
-      icon: 'PenTool',
-      title: 'Reel Creation',
-      description: 'Viral-ready reels and short-form content',
-    },
-    {
-      id: '5',
-      icon: 'Palette',
-      title: 'Branding',
-      description: 'Complete brand identity and strategy development',
-    },
-    {
-      id: '6',
-      icon: 'Code',
-      title: 'Web Design',
-      description: 'Beautiful and functional website design',
-    },
-  ],
+  services: [],
+  promotionalOffers: [],
   portfolio: [
     {
       id: '1',
@@ -131,6 +96,7 @@ const DEFAULT_DATA = {
         'Delight Graphics transformed our brand presence. Their creativity and professionalism exceeded expectations.',
       rating: 5,
       image: '',
+      clientImage: '',
     },
     {
       id: '2',
@@ -140,6 +106,7 @@ const DEFAULT_DATA = {
         'The team delivers stunning visuals that resonate with our audience. Highly recommended for premium brands.',
       rating: 5,
       image: '',
+      clientImage: '',
     },
     {
       id: '3',
@@ -149,8 +116,10 @@ const DEFAULT_DATA = {
         'Outstanding work across all platforms. They understand premium branding like no one else.',
       rating: 5,
       image: '',
+      clientImage: '',
     },
   ],
+  portfolioVideoShowcase: [],
   team: [
     {
       id: '1',
@@ -182,7 +151,10 @@ const DEFAULT_DATA = {
     favicon: '',
     footerText: '© 2024 Delight Graphics. All rights reserved.',
   },
-  media: [],
+  branding: {
+    logo: '/logo-default.png',
+    favicon: '',
+  },
 }
 
 export const AdminDataProvider = ({ children }) => {
@@ -202,10 +174,12 @@ export const AdminDataProvider = ({ children }) => {
 
   const loadCollections = async () => {
     try {
-      const [services, portfolio, testimonials] = await Promise.all([
+      const [services, portfolio, testimonials, portfolioVideoShowcase, promotionalOffers] = await Promise.all([
         getCollectionData('services'),
         getCollectionData('portfolio'),
         getCollectionData('testimonials'),
+        getCollectionData('portfolioVideoShowcase'),
+        getCollectionData('promotionalOffers'),
       ])
 
       setData((prev) => ({
@@ -213,6 +187,8 @@ export const AdminDataProvider = ({ children }) => {
         services: services.length ? services : DEFAULT_DATA.services,
         portfolio: portfolio.length ? portfolio : DEFAULT_DATA.portfolio,
         testimonials: testimonials.length ? testimonials : DEFAULT_DATA.testimonials,
+        portfolioVideoShowcase: portfolioVideoShowcase.length ? portfolioVideoShowcase : DEFAULT_DATA.portfolioVideoShowcase,
+        promotionalOffers: promotionalOffers.length ? promotionalOffers : DEFAULT_DATA.promotionalOffers,
       }))
     } catch (err) {
       console.error('AdminData load collections error:', err)
@@ -263,6 +239,18 @@ export const AdminDataProvider = ({ children }) => {
         }, (err) => {
           console.error('siteSettings snapshot error:', err)
           setError(err.message || 'Realtime update failed for site settings.')
+        })
+      )
+
+      unsubscribers.push(
+        subscribeToDocument('siteSettings', 'branding', (snapshot) => {
+          setData((prev) => ({
+            ...prev,
+            branding: snapshot ? { ...DEFAULT_DATA.branding, ...snapshot } : DEFAULT_DATA.branding,
+          }))
+        }, (err) => {
+          console.error('branding snapshot error:', err)
+          setError(err.message || 'Realtime update failed for branding.')
         })
       )
 
@@ -374,6 +362,18 @@ export const AdminDataProvider = ({ children }) => {
         })
       )
 
+      unsubscribers.push(
+        subscribeToCollection('promotionalOffers', (items) => {
+          setData((prev) => ({
+            ...prev,
+            promotionalOffers: items.length ? items : DEFAULT_DATA.promotionalOffers,
+          }))
+        }, (err) => {
+          console.error('promotionalOffers snapshot error:', err)
+          setError(err.message || 'Realtime update failed for promotional offers.')
+        })
+      )
+
       return () => unsubscribers.forEach((unsubscribe) => unsubscribe())
     }
 
@@ -406,12 +406,14 @@ export const AdminDataProvider = ({ children }) => {
 
   const handleSave = async (operation, successMessage) => {
     try {
-      await operation()
+      const result = await operation()
       showToast(successMessage, 'success')
+      return result
     } catch (err) {
       console.error('Admin update error:', err)
       setError(err.message || 'Update failed.')
       showToast(err.message || 'Update failed.', 'error')
+      throw err
     }
   }
 
@@ -432,20 +434,48 @@ export const AdminDataProvider = ({ children }) => {
   }
 
   const updateServices = async (services) => {
+    const normalizedServices = services.map((service) => ({
+      ...service,
+      id: String(service.id),
+      name: service.name || service.title || '',
+      description: service.description || '',
+      image: service.image || service.coverImage || '',
+      url: service.url || service.destinationUrl || '',
+      active: service.active !== false && service.isActive !== false,
+      order: Number(service.order ?? service.displayOrder ?? 1),
+      createdAt: service.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }))
+
     await handleSave(
-      () => syncCollection('services', services),
+      () => syncCollection('services', normalizedServices),
       'Services updated!'
     )
-    setData((prev) => ({ ...prev, services }))
+    setData((prev) => ({ ...prev, services: normalizedServices }))
   }
 
   const addService = async (service) => {
-    const newService = { ...service, id: String(Date.now()) }
-    await handleSave(
-      () => createData('services', newService),
+    const newService = {
+      ...service,
+      id: String(Date.now()),
+      name: service.name || service.title || '',
+      description: service.description || '',
+      image: service.image || service.coverImage || '',
+      url: service.url || service.destinationUrl || '',
+      active: service.active !== false && service.isActive !== false,
+      order: Number(service.order ?? service.displayOrder ?? 1),
+      createdAt: service.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    const savedService = await handleSave(
+      async () => {
+        const created = await createData('services', newService)
+        return created
+      },
       'Service added!'
     )
-    setData((prev) => ({ ...prev, services: [...prev.services, newService] }))
+    const finalService = savedService && typeof savedService === 'object' ? savedService : newService
+    setData((prev) => ({ ...prev, services: [...prev.services, finalService] }))
   }
 
   const deleteService = async (id) => {
@@ -465,6 +495,33 @@ export const AdminDataProvider = ({ children }) => {
       'Portfolio updated!'
     )
     setData((prev) => ({ ...prev, portfolio }))
+  }
+
+  const updatePortfolioVideoShowcase = async (showcaseItems) => {
+    await handleSave(
+      () => syncCollection('portfolioVideoShowcase', showcaseItems),
+      'Portfolio video showcase updated!'
+    )
+    setData((prev) => ({ ...prev, portfolioVideoShowcase: showcaseItems }))
+  }
+
+  const addPortfolioVideoShowcase = async (item) => {
+    const newItem = { ...item, id: String(Date.now()) }
+    const nextItems = [...(data.portfolioVideoShowcase || []), newItem]
+    await handleSave(
+      () => createData('portfolioVideoShowcase', newItem),
+      'Showcase item added!'
+    )
+    setData((prev) => ({ ...prev, portfolioVideoShowcase: nextItems }))
+  }
+
+  const deletePortfolioVideoShowcase = async (id) => {
+    const nextItems = (data.portfolioVideoShowcase || []).filter((item) => String(item.id) !== String(id))
+    await handleSave(
+      () => deleteData('portfolioVideoShowcase', String(id)),
+      'Showcase item deleted!'
+    )
+    setData((prev) => ({ ...prev, portfolioVideoShowcase: nextItems }))
   }
 
   const addPortfolioItem = async (item) => {
@@ -493,6 +550,61 @@ export const AdminDataProvider = ({ children }) => {
       'Testimonials updated!'
     )
     setData((prev) => ({ ...prev, testimonials }))
+  }
+
+  const updatePromotionalOffers = async (offers) => {
+    const normalizedOffers = offers.map((offer) => ({
+      ...offer,
+      id: String(offer.id),
+      title: offer.title || '',
+      description: offer.description || '',
+      image: offer.image || '',
+      buttonText: offer.buttonText || 'Learn More',
+      buttonUrl: offer.buttonUrl || '',
+      active: offer.active !== false,
+      order: Number(offer.order || 1),
+      createdAt: offer.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }))
+
+    await handleSave(
+      () => syncCollection('promotionalOffers', normalizedOffers),
+      'Promotional offers updated!'
+    )
+    setData((prev) => ({ ...prev, promotionalOffers: normalizedOffers }))
+  }
+
+  const addPromotionalOffer = async (offer) => {
+    const newOffer = {
+      ...offer,
+      id: String(Date.now()),
+      title: offer.title || '',
+      description: offer.description || '',
+      image: offer.image || '',
+      buttonText: offer.buttonText || 'Learn More',
+      buttonUrl: offer.buttonUrl || '',
+      active: offer.active !== false,
+      order: Number(offer.order || 1),
+      createdAt: offer.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    await handleSave(
+      () => createData('promotionalOffers', newOffer),
+      'Promotional offer added!'
+    )
+    setData((prev) => ({ ...prev, promotionalOffers: [...prev.promotionalOffers, newOffer] }))
+  }
+
+  const deletePromotionalOffer = async (id) => {
+    await handleSave(
+      () => deleteData('promotionalOffers', String(id)),
+      'Promotional offer deleted!'
+    )
+    setData((prev) => ({
+      ...prev,
+      promotionalOffers: prev.promotionalOffers.filter((offer) => String(offer.id) !== String(id)),
+    }))
   }
 
   const addTestimonial = async (testimonial) => {
@@ -527,7 +639,17 @@ export const AdminDataProvider = ({ children }) => {
   }
 
   const addTeamMember = async (member) => {
-    const newMember = { ...member, id: String(Date.now()) }
+    const newMember = {
+      ...member,
+      id: String(Date.now()),
+      designation: member.designation || member.role || '',
+      role: member.designation || member.role || '',
+      image: member.image || member.photo || '',
+      photo: member.image || member.photo || '',
+      bio: member.bio || '',
+      displayOrder: Number(member.displayOrder) || 1,
+      active: member.active !== false,
+    }
     const nextTeam = [...data.team, newMember]
     await handleSave(
       () => saveData('homepageContent', 'team', { members: nextTeam }),
@@ -537,6 +659,11 @@ export const AdminDataProvider = ({ children }) => {
   }
 
   const deleteTeamMember = async (id) => {
+    const memberToDelete = data.team.find((m) => String(m.id) === String(id))
+    const imageUrl = memberToDelete?.image || memberToDelete?.photo || ''
+    if (imageUrl) {
+      await deleteCloudinaryImage(imageUrl)
+    }
     const nextTeam = data.team.filter((m) => String(m.id) !== String(id))
     await handleSave(
       () => saveData('homepageContent', 'team', { members: nextTeam }),
@@ -561,7 +688,16 @@ export const AdminDataProvider = ({ children }) => {
     mergeData('socialMedia', socialData)
   }
 
+  const updateBranding = async (brandingData) => {
+    await handleSave(
+      () => saveData('siteSettings', 'branding', { ...brandingData }),
+      'Branding updated!'
+    )
+    mergeData('branding', brandingData)
+  }
+
   const updateSettings = async (settingsData) => {
+
     await handleSave(
       () => saveData('siteSettings', 'global', settingsData),
       'Settings updated!'
@@ -608,17 +744,25 @@ export const AdminDataProvider = ({ children }) => {
         updatePortfolio,
         addPortfolioItem,
         deletePortfolioItem,
+        updatePortfolioVideoShowcase,
+        addPortfolioVideoShowcase,
+        deletePortfolioVideoShowcase,
         updateTestimonials,
         addTestimonial,
         deleteTestimonial,
+        updatePromotionalOffers,
+        addPromotionalOffer,
+        deletePromotionalOffer,
         updateTeam,
         addTeamMember,
         deleteTeamMember,
         updateContact,
         updateSocialMedia,
+        updateBranding,
         updateSettings,
         addMedia,
         deleteMedia,
+        showToast,
       }}
     >
       {children}

@@ -5,32 +5,11 @@ import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import ServiceCard from '../components/ServiceCard'
 import PortfolioCard from '../components/PortfolioCard'
-import TestimonialCard from '../components/TestimonialCard'
+import TestimonialsSection from '../components/TestimonialsSection'
 import StatsCard from '../components/StatsCard'
 import ProcessStep from '../components/ProcessStep'
+import PromotionalOfferCard from '../components/PromotionalOfferCard'
 import { useWebsiteData } from '../context/WebsiteDataContext'
-import {
-  Zap,
-  Smartphone,
-  PenTool,
-  Camera,
-  TrendingUp,
-  Palette,
-  Code,
-  Image,
-} from 'lucide-react'
-
-// Icon mapping
-const iconMap = {
-  TrendingUp,
-  Smartphone,
-  Camera,
-  PenTool,
-  Palette,
-  Code,
-  Image,
-  Zap,
-}
 
 export default function Home() {
   const { data, isLoaded } = useWebsiteData()
@@ -54,9 +33,13 @@ export default function Home() {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
-  const services = data?.services || []
+  const services = (data?.services || [])
+    .filter((service) => service.active !== false)
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
+  const promotionalOffers = (data?.promotionalOffers || [])
+    .filter((offer) => offer.active !== false)
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
   const portfolio = data?.portfolio || []
-  const testimonials = data?.testimonials || []
   const stats = data?.stats || []
 
   const processSteps = [
@@ -255,10 +238,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.slice(0, 6).map((service, index) => (
               <ServiceCard
-                key={index}
-                icon={iconMap[service.icon] || TrendingUp}
-                title={service.title}
+                key={service.id || index}
+                name={service.name || service.title || 'Premium Service'}
                 description={service.description}
+                image={service.image}
+                url={service.url || service.destinationUrl}
                 index={index}
               />
             ))}
@@ -292,6 +276,7 @@ export default function Home() {
                 category={item.category}
                 description={item.description}
                 image={item.image || item.images?.[0]}
+                destinationUrl={item.destinationUrl}
                 index={index}
               />
             ))}
@@ -314,26 +299,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <SectionTitle title="What Clients Say" subtitle="Testimonials" />
+          <SectionTitle title="Creative Offers" subtitle="Featured Promotions" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard
-                key={index}
-                name={testimonial.name}
-                company={testimonial.company}
-                content={testimonial.content}
-                rating={testimonial.rating}
-                image={testimonial.image}
-                index={index}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {promotionalOffers.map((offer, index) => (
+              <PromotionalOfferCard key={offer.id || index} offer={offer} index={index} />
             ))}
           </div>
         </div>
       </section>
+
+      <TestimonialsSection />
 
       {/* CTA Banner */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">

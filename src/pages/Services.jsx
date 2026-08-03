@@ -3,159 +3,9 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import ServiceCard from '../components/ServiceCard'
-import PackageCard from '../components/PackageCard'
+import PromotionalOfferCard from '../components/PromotionalOfferCard'
 import { useWebsiteData } from '../context/WebsiteDataContext'
-import {
-  TrendingUp,
-  Smartphone,
-  Camera,
-  PenTool,
-  Palette,
-  Code,
-  Image,
-  Zap,
-  MessageCircle,
-  FileText,
-  Package,
-  MapPin,
-  Layout,
-  BookOpen,
-  MessageSquare,
-  Layers,
-  Clipboard,
-  Edit3,
-  Crown,
-  Shield,
-  Sparkles,
-} from 'lucide-react'
-
-// Icon mapping for service icons
-const iconMap = {
-  TrendingUp,
-  Smartphone,
-  Camera,
-  PenTool,
-  Palette,
-  Code,
-  Image,
-  Zap,
-  MessageCircle,
-  FileText,
-  Package,
-  MapPin,
-  Layout,
-  BookOpen,
-  MessageSquare,
-  Layers,
-  Clipboard,
-  Edit3,
-  Crown,
-  Shield,
-  Sparkles,
-}
-
-const packageTiers = [
-  {
-    title: 'Basic Package',
-    subtitle: 'Perfect for startups and small businesses looking for essential creative branding solutions.',
-    features: [
-      '3 Unique Creative Concepts',
-      'Professional Brand Design Support',
-      'Logo Design (Typography & Iconic Styles)',
-      'Brochure / Flyer Design',
-      'Packaging Design',
-      'Signage / Artwork Design',
-      'Print Ready Final Files',
-      'JPG, PNG & Vector PDF Formats',
-      'Basic Brand Consultation',
-      'Royalty-Free Assets Support',
-      'Unlimited Revisions During Project Duration',
-      'Dedicated Graphic Designer Support',
-      'Fast Project Delivery',
-      'Client Ownership Rights',
-    ],
-    workflow: ['Understanding brand requirements', 'Creative concept development', 'Design presentation', 'Revisions & refinements', 'Final file delivery'],
-    suitableFor: 'Startups • Local Businesses • Small Brands • New Product Launches',
-    footerNote: 'Project timelines vary depending on service requirements and project scope.',
-    ctaLabel: 'Get Quote',
-    ctaHref: '/contact#contact-form',
-    icon: Sparkles,
-    accent: 'from-violet-500/10 via-slate-900/90 to-cyan-500/10',
-  },
-  {
-    title: 'Standard Package',
-    subtitle: 'Ideal for growing brands that need premium-quality branding and marketing creatives.',
-    features: [
-      'Advanced Creative Branding Solutions',
-      'Multiple Unique Design Concepts',
-      'Logo Design with Extended Variations',
-      'Stationery Design',
-      'Business Card Design',
-      'Letterhead Design',
-      'Envelope Design',
-      'Brochure & Marketing Material Design',
-      'Creative Packaging Design',
-      'Signage & Advertising Artwork',
-      'Brand-Oriented Visual Strategy',
-      'Competitor & Audience Analysis',
-      'Professional Design Consultation',
-      'Print Ready High-Resolution Files',
-      'Vector Source Files Included',
-      'Premium Layout & Presentation Design',
-      'Unlimited Revisions During Project Duration',
-      'Senior Designer Involvement',
-      'Priority Project Handling',
-      'Improved Brand Consistency',
-      'Better Visual Communication',
-      'Premium Creative Direction',
-      'Enhanced Marketing Presence',
-    ],
-    workflow: ['Brand discovery & strategy', 'Concept development', 'Premium design presentation', 'Refinement & approvals', 'High-resolution final delivery'],
-    suitableFor: 'Established Businesses • Growing Brands • Retail Stores • Professional Service Companies',
-    footerNote: 'Timeline depends on project complexity and design requirements.',
-    ctaLabel: 'Start Your Project',
-    ctaHref: '/contact#contact-form',
-    icon: Shield,
-    accent: 'from-cyan-500/12 via-slate-900/90 to-violet-500/10',
-    highlight: true,
-  },
-  {
-    title: 'Premium Package',
-    subtitle: 'Complete high-end creative branding experience tailored for premium businesses and modern brands.',
-    features: [
-      'Bespoke Brand Identity Development',
-      'Fully Customized Creative Direction',
-      'Handcrafted Premium Logo Design',
-      'Brand Story & Identity Strategy',
-      'Premium Stationery Suite',
-      'High-End Brochure & Presentation Design',
-      'Luxury Packaging Design',
-      'Advanced Advertising & Signage Design',
-      'Creative Visualisation & Mockups',
-      '3D Brand Presentation Concepts',
-      'Professional Brand Consultation',
-      'Premium Creative Supervision',
-      'Visual Identity Consistency Across All Designs',
-      'High-Resolution Print & Digital Assets',
-      'Source Files & Ownership Rights Included',
-      'Unlimited Revisions During Project Duration',
-      'Dedicated Senior Creative Team',
-      'Priority Workflow Management',
-      'Strategic Creative Planning',
-      'Advanced Brand Positioning',
-      'Premium Design Presentation',
-      'Modern Luxury Visual Aesthetic',
-      'Personalized Creative Collaboration',
-    ],
-    workflow: ['Strategic creative planning', 'Luxury visual direction', 'Bespoke design production', 'Senior creative supervision', 'Final premium asset delivery'],
-    suitableFor: 'Premium Brands • Corporate Businesses • Luxury Products • Large-Scale Marketing Campaigns • High-End Commercial Projects',
-    footerNote: 'Customized based on project scope and creative requirements.',
-    ctaLabel: 'Book Consultation',
-    ctaHref: '/contact#contact-form',
-    icon: Crown,
-    accent: 'from-amber-500/15 via-slate-900/90 to-violet-500/10',
-  },
-]
+import { MessageCircle, FileText, Package, MapPin, Layout, BookOpen, MessageSquare, Layers, Clipboard, Edit3 } from 'lucide-react'
 
 export default function Services() {
   const { data, isLoaded } = useWebsiteData()
@@ -164,7 +14,12 @@ export default function Services() {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
-  const services = data?.services || []
+  const services = (data?.services || [])
+    .filter((service) => service.active !== false)
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
+  const promotionalOffers = (data?.promotionalOffers || [])
+    .filter((offer) => offer.active !== false)
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
 
   return (
     <div className="overflow-hidden">
@@ -194,10 +49,11 @@ export default function Services() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <ServiceCard
-                key={index}
-                icon={service.icon}
-                title={service.title}
+                key={service.id || index}
+                name={service.name || service.title || 'Premium Service'}
                 description={service.description}
+                image={service.image}
+                url={service.url || service.destinationUrl}
                 index={index}
               />
             ))}
@@ -246,21 +102,14 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Premium Creative Packages */}
+      {/* Promotional Offers */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <SectionTitle
-            title="Creative Agency Packages"
-            subtitle="Luxury Brand Solutions"
-          />
+          <SectionTitle title="Creative Offers" subtitle="Featured Promotions" />
 
-          <p className="mx-auto mb-12 max-w-3xl text-center text-text-muted">
-            Select a premium package designed for your creative growth, brand storytelling, and modern visual identity.
-          </p>
-
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {packageTiers.map((tier, index) => (
-              <PackageCard key={index} {...tier} />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {promotionalOffers.map((offer, index) => (
+              <PromotionalOfferCard key={offer.id || index} offer={offer} index={index} />
             ))}
           </div>
         </div>

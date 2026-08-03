@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
@@ -30,24 +30,29 @@ const coreValues = [
 
 const timeline = [
   {
-    year: '2014',
+    year: '03/01/2023',
     title: 'Founded',
-    description: 'Started with a vision to revolutionize creative digital services',
+    description: 'Started with a vision to revolutionize creative digital services.',
   },
   {
-    year: '2016',
-    title: 'First 100 Clients',
-    description: 'Expanded team and opened multiple creative studios',
-  },
-  {
-    year: '2019',
-    title: 'Industry Recognition',
-    description: 'Won 15+ awards for design and marketing excellence',
+    year: '2023',
+    title: 'Started with Creating Graphics Designs',
+    description: 'Served 30,000+ Designs and Posters.',
   },
   {
     year: '2024',
-    title: 'Global Leaders',
-    description: 'Serving 500+ brands across 30+ countries',
+    title: 'Started Web Development',
+    description: 'Successfully Completed 20+ Web Applications.',
+  },
+  {
+    year: '2025',
+    title: 'Started Ads Strategies',
+    description: 'Crafted 300+ high-converting advertisements across multiple platforms.',
+  },
+  {
+    year: '2026',
+    title: 'Introduced Photography & Videography Services',
+    description: 'Working with 60+ happy clients.',
   },
 ]
 
@@ -183,7 +188,7 @@ export default function About() {
               {
                 title: 'Award-Winning Team',
                 description:
-                  'Our team has won 50+ international awards for creative excellence and innovation.',
+                  'Our team has won many awards and certificates for creative excellence and innovation.',
               },
               {
                 title: 'Proven Track Record',
@@ -247,32 +252,40 @@ export default function About() {
           <SectionTitle title="Our Team" subtitle="Meet the Creatives" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -10 }}
-                className="rounded-2xl overflow-hidden"
-              >
-                {/* Avatar */}
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="w-full h-64 bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-5xl font-bold"
-                >
-                  {member.name.charAt(0)}
-                </motion.div>
+            {teamMembers.map((member, index) => {
+              const imageUrl = member.image || member.photo || ''
+              const title = member.designation || member.role || 'Team Member'
+              const bio = member.bio || member.specialty || ''
 
-                {/* Info */}
-                <div className="p-6 glass-premium border-t border-background-border">
-                  <h3 className="text-lg font-bold mb-1">{member.name}</h3>
-                  <p className="text-secondary-400 text-sm font-semibold mb-3">{member.role}</p>
-                  <p className="text-text-muted text-sm">{member.specialty}</p>
-                </div>
-              </motion.div>
-            ))}
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  whileHover={{ y: -10 }}
+                  className="rounded-2xl overflow-hidden"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="w-full h-64 bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-5xl font-bold overflow-hidden"
+                  >
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={member.name} className="h-full w-full object-cover" loading="lazy" />
+                    ) : (
+                      <span>{member.name?.charAt(0) || 'T'}</span>
+                    )}
+                  </motion.div>
+
+                  <div className="p-6 glass-premium border-t border-background-border">
+                    <h3 className="text-lg font-bold mb-1">{member.name}</h3>
+                    <p className="text-secondary-400 text-sm font-semibold mb-3">{title}</p>
+                    {bio && <p className="text-text-muted text-sm">{bio}</p>}
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
       </section>

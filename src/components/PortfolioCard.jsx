@@ -2,8 +2,14 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Eye } from 'lucide-react'
 
-export default function PortfolioCard({ title, category, image, description, index }) {
+export default function PortfolioCard({ title, category, image, description, destinationUrl, index }) {
   const [isHovered, setIsHovered] = useState(false)
+  const hasDestinationUrl = Boolean(destinationUrl && destinationUrl.trim())
+
+  const handleClick = () => {
+    if (!hasDestinationUrl) return
+    window.open(destinationUrl, '_blank', 'noopener,noreferrer')
+  }
 
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.8 },
@@ -25,7 +31,16 @@ export default function PortfolioCard({ title, category, image, description, ind
       viewport={{ once: true, margin: '-100px' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer"
+      onClick={handleClick}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          handleClick()
+        }
+      }}
+      tabIndex={hasDestinationUrl ? 0 : -1}
+      role={hasDestinationUrl ? 'button' : undefined}
+      className={`group relative overflow-hidden rounded-2xl aspect-square ${hasDestinationUrl ? 'cursor-pointer' : 'cursor-default'}`}
     >
       {/* Background Image Placeholder */}
       <div

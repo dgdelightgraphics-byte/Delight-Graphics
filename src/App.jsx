@@ -25,7 +25,9 @@ import { AdminDashboard } from './admin/pages/Dashboard'
 import { HeroPage } from './admin/pages/HeroPage'
 import { AboutPage } from './admin/pages/AboutPage'
 import { ServicesPage } from './admin/pages/ServicesPage'
+import { PromotionalOffersPage } from './admin/pages/PromotionalOffersPage'
 import { PortfolioPage } from './admin/pages/PortfolioPage'
+import { PortfolioVideoShowcasePage } from './admin/pages/PortfolioVideoShowcasePage'
 import { TestimonialsPage } from './admin/pages/TestimonialsPage'
 import { TeamPage } from './admin/pages/TeamPage'
 import { ContactPage } from './admin/pages/ContactPage'
@@ -102,10 +104,26 @@ function App() {
                     }
                   />
                   <Route
+                    path="/admin/promotional-offers"
+                    element={
+                      <ProtectedRoute>
+                        <PromotionalOffersPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
                     path="/admin/portfolio"
                     element={
                       <ProtectedRoute>
                         <PortfolioPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/portfolio-video-showcase"
+                    element={
+                      <ProtectedRoute>
+                        <PortfolioVideoShowcasePage />
                       </ProtectedRoute>
                     }
                   />

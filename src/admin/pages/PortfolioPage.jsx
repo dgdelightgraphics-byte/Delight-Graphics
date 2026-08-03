@@ -14,16 +14,42 @@ export const PortfolioPage = () => {
     category: 'Web Design',
     featured: false,
     images: [],
+    destinationUrl: '',
   })
   const [editedPortfolio, setEditedPortfolio] = useState(data.portfolio)
   const [dragTarget, setDragTarget] = useState(null)
+  const [newUrlError, setNewUrlError] = useState('')
+  const [editUrlErrors, setEditUrlErrors] = useState({})
+  const [saveError, setSaveError] = useState('')
+
+  const isValidUrl = (value) => {
+    if (!value || !value.trim()) return true
+
+    try {
+      const url = new URL(value.trim())
+      return ['http:', 'https:'].includes(url.protocol)
+    } catch {
+      return false
+    }
+  }
+
+  const getUrlError = (value) => {
+    if (!value || !value.trim()) return ''
+    return isValidUrl(value) ? '' : 'Please enter a valid URL starting with http:// or https://'
+  }
 
   const handleAddItem = () => {
-    if (newItem.title.trim()) {
-      addPortfolioItem(newItem)
-      setNewItem({ title: '', description: '', category: 'Web Design', featured: false, images: [] })
-      setIsAdding(false)
+    const urlError = getUrlError(newItem.destinationUrl)
+    setNewUrlError(urlError)
+
+    if (!newItem.title.trim() || urlError) {
+      return
     }
+
+    addPortfolioItem({ ...newItem, destinationUrl: newItem.destinationUrl.trim() })
+    setNewItem({ title: '', description: '', category: 'Web Design', featured: false, images: [], destinationUrl: '' })
+    setNewUrlError('')
+    setIsAdding(false)
   }
 
   const addImagesToItem = async (itemId, files) => {
@@ -95,6 +121,13 @@ export const PortfolioPage = () => {
   }
 
   const handleSave = () => {
+    const hasInvalidUrl = editedPortfolio.some((item) => Boolean(getUrlError(item.destinationUrl)))
+    if (hasInvalidUrl) {
+      setSaveError('Please correct the invalid destination URLs before saving.')
+      return
+    }
+
+    setSaveError('')
     updatePortfolio(editedPortfolio)
     setIsEditing(false)
   }
@@ -110,6 +143,10 @@ export const PortfolioPage = () => {
         item.id === id ? { ...item, [field]: value } : item
       )
     )
+
+    if (field === 'destinationUrl') {
+      setEditUrlErrors((prev) => ({ ...prev, [id]: getUrlError(value) }))
+    }
   }
 
   const categories = ['Web Design', 'Web Development', 'Branding', 'UI/UX', 'Photography', 'Social Media', 'Video Editing', 'Animation']
@@ -202,6 +239,17 @@ export const PortfolioPage = () => {
                 className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"
                 rows="3"
               />
+              <input
+                type="url"
+                placeholder="https://example.com"
+                value={newItem.destinationUrl}
+                onChange={(e) => {
+                  setNewItem({ ...newItem, destinationUrl: e.target.value })
+                  setNewUrlError(getUrlError(e.target.value))
+                }}
+                className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+              />
+              {newUrlError && <p className="text-sm text-red-400">{newUrlError}</p>}
               <select
                 value={newItem.category}
                 onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
@@ -351,6 +399,14 @@ export const PortfolioPage = () => {
                       className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none resize-none"
                       rows="2"
                     />
+                    <input
+                      type="url"
+                      placeholder="https://example.com"
+                      value={item.destinationUrl || ''}
+                      onChange={(e) => handleItemChange(item.id, 'destinationUrl', e.target.value)}
+                      className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none"
+                    />
+                    {editUrlErrors[item.id] && <p className="text-sm text-red-400">{editUrlErrors[item.id]}</p>}
                     <select
                       value={item.category}
                       onChange={(e) => handleItemChange(item.id, 'category', e.target.value)}
@@ -432,15 +488,18 @@ export const PortfolioPage = () => {
         </div>
 
         {isEditing && (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleSave}
-            className="mt-8 flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all mx-auto"
-          >
-            <Save size={20} />
-            Save Changes
-          </motion.button>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            {saveError && <p className="text-sm text-red-400">{saveError}</p>}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleSave}
+              className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all"
+            >
+              <Save size={20} />
+              Save Changes
+            </motion.button>
+          </div>
         )}
       </motion.div>
     </AdminLayout>

@@ -1,20 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 
-export default function ServiceCard({ icon: Icon, title, description, index }) {
-  const navigate = useNavigate()
+export default function ServiceCard({ name, description, image, url, index }) {
+  const [isHovered, setIsHovered] = useState(false)
+  const hasDestinationUrl = Boolean(url && url.trim())
 
-  const handleGetStarted = () => {
-    navigate('/contact')
+  const openDestination = () => {
+    if (!hasDestinationUrl) return
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, scale: 0.92 },
     visible: {
       opacity: 1,
-      y: 0,
+      scale: 1,
       transition: {
         duration: 0.6,
         delay: index * 0.1,
@@ -28,32 +29,61 @@ export default function ServiceCard({ icon: Icon, title, description, index }) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: '-100px' }}
-      whileHover={{ y: -10 }}
-      className="group p-8 rounded-2xl glass-premium hover:border-primary-500/50 transition-all duration-500 card-hover glow-primary hover:glow-primary"
+      whileHover={{ y: -8, scale: 1.01 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={hasDestinationUrl ? openDestination : undefined}
+      onKeyDown={(event) => {
+        if ((event.key === 'Enter' || event.key === ' ') && hasDestinationUrl) {
+          event.preventDefault()
+          openDestination()
+        }
+      }}
+      tabIndex={hasDestinationUrl ? 0 : -1}
+      role={hasDestinationUrl ? 'button' : undefined}
+      className={`group relative overflow-hidden rounded-2xl border border-background-border bg-slate-900/60 backdrop-blur-xl transition-all duration-500 card-hover ${hasDestinationUrl ? 'cursor-pointer hover:border-primary-500/50 glow-primary hover:glow-primary' : 'cursor-default'}`}
     >
-      <motion.div
-        whileHover={{ scale: 1.1, rotate: 10 }}
-        className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center mb-6 group-hover:shadow-lg group-hover:shadow-primary-500/50 transition-all"
-      >
-        <Icon size={32} className="text-white" />
-      </motion.div>
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <div
+          className={`absolute inset-0 transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'} ${image ? 'bg-cover bg-center' : 'bg-gradient-to-br from-primary-500 to-secondary-500'}`}
+          style={image ? { backgroundImage: `url('${image}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+        />
 
-      <h3 className="text-xl font-bold mb-4 text-text-primary group-hover:gradient-text transition-all">
-        {title}
-      </h3>
+        <motion.div
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        />
 
-      <p className="text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
-        {description}
-      </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+          <h3 className="text-2xl font-bold text-white mb-3">{name}</h3>
+          <p className="text-sm leading-relaxed text-slate-200/90">{description}</p>
+        </div>
 
-      <motion.button
-        onClick={handleGetStarted}
-        whileHover={{ x: 5 }}
-        className="mt-6 px-6 py-2.5 bg-gradient-to-r from-secondary-500 to-primary-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-primary-500/50 transition-all duration-300 flex items-center gap-2 group/btn"
-      >
-        <span>Get Started</span>
-        <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-      </motion.button>
+        <div className="absolute top-4 right-4 px-3 py-1 rounded-full glass text-xs font-semibold z-20 text-secondary-400">
+          Service
+        </div>
+      </div>
+
+      <div className="p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
+            <Sparkles size={16} className="text-secondary-400" />
+            Premium Service
+          </div>
+          <motion.button
+            onClick={(event) => {
+              event.stopPropagation()
+              openDestination()
+            }}
+            whileHover={{ x: 5 }}
+            disabled={!hasDestinationUrl}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-secondary-500 to-primary-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <span>Explore Service</span>
+            <ArrowRight size={16} className="transition-transform" />
+          </motion.button>
+        </div>
+      </div>
     </motion.div>
   )
 }

@@ -40,12 +40,13 @@ export default function TestimonialCard({ name, company, content, rating, image,
       <div className="flex items-center gap-4 pt-6 border-t border-background-border">
         <motion.div
           whileHover={{ scale: 1.1 }}
-          className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 overflow-hidden flex-shrink-0"
+          className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 overflow-hidden flex-shrink-0 border border-white/70 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
         >
-          {image ? (
-            <img 
-              src={image} 
+          {image && typeof image === 'string' && image.trim() ? (
+            <img
+              src={image}
               alt={name}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           ) : (
