@@ -16,10 +16,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { uploadFile } from '../../utils/storageService'
 import { useAdminData } from '../context/AdminDataContext'
 import { AdminLayout } from './AdminLayout'
-import { storage } from '../../config/firebase'
+ 
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -87,29 +87,7 @@ const compressImageFile = async (file) => {
   return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' })
 }
 
-const uploadStorageFile = async (file, folder, onProgress) => {
-  const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`)
-  const uploadTask = uploadBytesResumable(storageRef, file)
-
-  return new Promise((resolve, reject) => {
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-        onProgress(progress)
-      },
-      reject,
-      async () => {
-        try {
-          const url = await getDownloadURL(uploadTask.snapshot.ref)
-          resolve({ url, path: uploadTask.snapshot.ref.fullPath })
-        } catch (error) {
-          reject(error)
-        }
-      }
-    )
-  })
-}
+const uploadStorageFile = (file, folder, onProgress) => uploadFile(file, folder, onProgress)
 
 const inferVideoType = (value) => {
   const normalized = value?.toLowerCase() || ''
@@ -377,7 +355,9 @@ export const PortfolioVideoShowcasePage = () => {
                     <Upload size={16} />
                     Cover Image
                   </label>
-                  <label className="block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300">
+                  <label
+                    className={`block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300 ${coverUpload.uploading ? 'pointer-events-none opacity-60' : ''}`}
+                  >
                     {draftItem.coverImage ? 'Replace Cover Image' : 'Upload Cover Image'}
                     <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={handleCoverUpload} />
                   </label>
@@ -407,7 +387,9 @@ export const PortfolioVideoShowcasePage = () => {
                     <Film size={16} />
                     Video
                   </label>
-                  <label className="block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300">
+                  <label
+                    className={`block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300 ${videoUpload.uploading ? 'pointer-events-none opacity-60' : ''}`}
+                  >
                     {draftItem.videoUrl ? 'Replace MP4 File' : 'Upload MP4 Video'}
                     <input type="file" accept="video/mp4" className="hidden" onChange={handleVideoUpload} />
                   </label>

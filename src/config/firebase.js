@@ -52,6 +52,8 @@ try {
 // Prepared exports for Authentication, Firestore and Storage integration
 const auth = getAuth(app);
 const db = getFirestore(app);
+// Create storage instance with default settings. The SDK handles retries internally.
+// We ensure env variable presence earlier; no direct retry config is exposed in modular SDK.
 const storage = getStorage(app);
 
 export { app, auth, db, storage };

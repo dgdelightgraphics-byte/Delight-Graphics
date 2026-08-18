@@ -27,8 +27,44 @@ const DEFAULT_DATA = {
     values: ['Innovation', 'Excellence', 'Client-Focused', 'Creative'],
     images: [],
   },
-  services: [],
-  promotionalOffers: [],
+  services: [
+    {
+      id: '1',
+      icon: 'TrendingUp',
+      title: 'Digital Marketing',
+      description: 'Comprehensive strategies to grow your brand online',
+    },
+    {
+      id: '2',
+      icon: 'Smartphone',
+      title: 'Social Media',
+      description: 'Engaging content that connects with your audience',
+    },
+    {
+      id: '3',
+      icon: 'Camera',
+      title: 'Video Editing',
+      description: 'Professional video production and editing services',
+    },
+    {
+      id: '4',
+      icon: 'PenTool',
+      title: 'Reel Creation',
+      description: 'Viral-ready reels and short-form content',
+    },
+    {
+      id: '5',
+      icon: 'Palette',
+      title: 'Branding',
+      description: 'Complete brand identity and strategy development',
+    },
+    {
+      id: '6',
+      icon: 'Code',
+      title: 'Web Design',
+      description: 'Beautiful and functional website design',
+    },
+  ],
   portfolio: [
     {
       id: '1',
@@ -103,7 +139,6 @@ const DEFAULT_DATA = {
       clientImage: '',
     },
   ],
-  portfolioVideoShowcase: [],
   team: [
     {
       id: '1',
@@ -115,9 +150,9 @@ const DEFAULT_DATA = {
   ],
   stats: [
     { value: '1000+', label: 'Projects Completed' },
-    { value: '100%', label: 'Happy Clients' },
-    { value: '400+', label: 'Industries' },
-    { value: '3+', label: 'Years Experience' },
+    { value: '1000+', label: 'Happy Clients' },
+    { value: '400+', label: 'Brands' },
+    { value: '5+', label: 'Years Experience' },
   ],
   contact: {
     phone: '+1 (555) 123-4567',
@@ -142,10 +177,6 @@ const DEFAULT_DATA = {
     favicon: '',
     footerText: '© 2024 Delight Graphics. All rights reserved.',
   },
-  branding: {
-    logo: '/logo-default.png',
-    favicon: '',
-  },
   media: [],
 }
 
@@ -162,9 +193,7 @@ export const WebsiteDataProvider = ({ children }) => {
     socialMedia: false,
     team: false,
     media: false,
-    portfolioVideoShowcase: false,
     services: false,
-    promotionalOffers: false,
     portfolio: false,
     testimonials: false,
   })
@@ -191,15 +220,6 @@ export const WebsiteDataProvider = ({ children }) => {
         }))
         setLoadedSections((prev) => ({ ...prev, settings: true }))
       }, (err) => captureError('siteSettings', err))
-    )
-
-    unsubscribers.push(
-      subscribeToDocument('siteSettings', 'branding', (snapshot) => {
-        setData((prev) => ({
-          ...prev,
-          branding: snapshot ? { ...DEFAULT_DATA.branding, ...snapshot } : DEFAULT_DATA.branding,
-        }))
-      }, (err) => captureError('branding', err))
     )
 
     unsubscribers.push(
@@ -275,16 +295,6 @@ export const WebsiteDataProvider = ({ children }) => {
     )
 
     unsubscribers.push(
-      subscribeToCollection('promotionalOffers', (items) => {
-        setData((prev) => ({
-          ...prev,
-          promotionalOffers: items.length ? items : DEFAULT_DATA.promotionalOffers,
-        }))
-        setLoadedSections((prev) => ({ ...prev, promotionalOffers: true }))
-      }, (err) => captureError('promotionalOffers', err))
-    )
-
-    unsubscribers.push(
       subscribeToCollection('portfolio', (items) => {
         setData((prev) => ({
           ...prev,
@@ -304,22 +314,12 @@ export const WebsiteDataProvider = ({ children }) => {
       }, (err) => captureError('testimonials', err))
     )
 
-    unsubscribers.push(
-      subscribeToCollection('portfolioVideoShowcase', (items) => {
-        setData((prev) => ({
-          ...prev,
-          portfolioVideoShowcase: items.length ? items : DEFAULT_DATA.portfolioVideoShowcase,
-        }))
-        setLoadedSections((prev) => ({ ...prev, portfolioVideoShowcase: true }))
-      }, (err) => captureError('portfolioVideoShowcase', err))
-    )
-
     return () => unsubscribers.forEach((unsubscribe) => unsubscribe())
   }, [])
 
   const refreshData = async () => {
     try {
-      const [settings, contact, hero, about, socialMedia, team, media, services, portfolio, testimonials, portfolioVideoShowcase] = await Promise.all([
+      const [settings, contact, hero, about, socialMedia, team, media, services, portfolio, testimonials] = await Promise.all([
         getData('siteSettings', 'global'),
         getData('contactInfo', 'main'),
         getData('homepageContent', 'hero'),
@@ -330,7 +330,6 @@ export const WebsiteDataProvider = ({ children }) => {
         getCollectionData('services'),
         getCollectionData('portfolio'),
         getCollectionData('testimonials'),
-        getCollectionData('portfolioVideoShowcase'),
       ])
 
       setData({
@@ -346,7 +345,6 @@ export const WebsiteDataProvider = ({ children }) => {
           : DEFAULT_DATA.socialMedia,
         settings: settings ? { ...DEFAULT_DATA.settings, ...settings } : DEFAULT_DATA.settings,
         media: media?.items?.length ? media.items : DEFAULT_DATA.media,
-        portfolioVideoShowcase: portfolioVideoShowcase.length ? portfolioVideoShowcase : DEFAULT_DATA.portfolioVideoShowcase,
         stats: DEFAULT_DATA.stats,
       })
     } catch (err) {

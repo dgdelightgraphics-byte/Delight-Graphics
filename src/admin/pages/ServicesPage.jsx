@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Edit3, Save, X, Plus, Trash2, Upload, Image as ImageIcon, Search, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react'
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { uploadFile } from '../../utils/storageService'
 import { useAdminData } from '../context/AdminDataContext'
 import { AdminLayout } from './AdminLayout'
-import { storage } from '../../config/firebase'
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -40,29 +39,7 @@ const compressImageFile = async (file) => {
   return new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' })
 }
 
-const uploadStorageFile = async (file, folder, onProgress) => {
-  const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`)
-  const uploadTask = uploadBytesResumable(storageRef, file)
-
-  return new Promise((resolve, reject) => {
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-        onProgress(progress)
-      },
-      reject,
-      async () => {
-        try {
-          const url = await getDownloadURL(uploadTask.snapshot.ref)
-          resolve({ url, path: uploadTask.snapshot.ref.fullPath })
-        } catch (error) {
-          reject(error)
-        }
-      }
-    )
-  })
-}
+const uploadStorageFile = (file, folder, onProgress) => uploadFile(file, folder, onProgress)
 
 const createEmptyService = () => ({
   name: '',
@@ -293,10 +270,12 @@ export const ServicesPage = () => {
                   <Upload size={16} />
                   Cover Image
                 </label>
-                <label className="block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300">
-                  {draftService.image ? 'Replace Cover Image' : 'Upload Cover Image'}
-                  <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={handleImageUpload} />
-                </label>
+                  <label
+                    className={`block cursor-pointer rounded-lg border border-slate-600 px-4 py-3 text-center text-sm text-slate-300 transition hover:border-blue-500 hover:text-blue-300 ${uploadState.uploading ? 'pointer-events-none opacity-60' : ''}`}
+                  >
+                    {draftService.image ? 'Replace Cover Image' : 'Upload Cover Image'}
+                    <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={handleImageUpload} />
+                  </label>
                 <p className="mt-2 text-xs text-slate-400">JPG, JPEG, PNG, WEBP • Max 5MB • Auto optimized</p>
                 {uploadState.uploading && (
                   <div className="mt-3 text-sm text-slate-300">{uploadState.message} {uploadState.progress}%</div>

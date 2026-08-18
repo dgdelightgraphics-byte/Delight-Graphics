@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { X, Play } from 'lucide-react'
 import SectionTitle from '../components/SectionTitle'
 import PortfolioCard from '../components/PortfolioCard'
-import TestimonialsSection from '../components/TestimonialsSection'
 import { useWebsiteData } from '../context/WebsiteDataContext'
 
 const portfolioItems = [
@@ -72,29 +70,9 @@ const portfolioItems = [
 
 const categories = ['All', 'Branding', 'Social Media', 'Video', 'Photography', 'Animation', 'Web Design', 'Marketing', 'Graphic Design']
 
-const getVideoEmbedUrl = (videoItem) => {
-  const url = videoItem?.videoUrl || ''
-  const normalized = url.toLowerCase()
-
-  if (normalized.includes('youtube.com') || normalized.includes('youtu.be')) {
-    const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|watch\?.+&v=)([^#&?]*).*/
-    const match = url.match(regExp)
-    const id = match && match[1] ? match[1] : ''
-    return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : ''
-  }
-
-  if (normalized.includes('vimeo.com')) {
-    const match = url.match(/vimeo\.com\/(\d+)/)
-    return match ? `https://player.vimeo.com/video/${match[1]}?autoplay=1` : ''
-  }
-
-  return ''
-}
-
 export default function Portfolio() {
   const { data, isLoaded } = useWebsiteData()
   const [activeCategory, setActiveCategory] = useState('All')
-  const [selectedVideo, setSelectedVideo] = useState(null)
 
   if (!isLoaded) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -104,9 +82,6 @@ export default function Portfolio() {
   const filteredItems = activeCategory === 'All' 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory)
-  const showcaseVideos = (data?.portfolioVideoShowcase || [])
-    .filter((item) => item.isActive !== false)
-    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -194,8 +169,6 @@ export default function Portfolio() {
                   category={item.category}
                   description={item.description}
                   image={item.image || item.images?.[0]}
-                  images={item.images}
-                  destinationUrl={item.destinationUrl}
                   index={index}
                 />
               ))}
@@ -240,17 +213,57 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <TestimonialsSection title="What Clients Say" subtitle="Testimonials" />
+      {/* Testimonials */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle title="Client Feedback" subtitle="Success Stories" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: 'Delight Graphics completely transformed our brand. The results exceeded our expectations.',
+                author: 'CEO, Tech Startup',
+              },
+              {
+                quote: 'Professional, creative, and results-driven. Best investment we made for our brand.',
+                author: 'Marketing Manager, E-Commerce',
+              },
+              {
+                quote: 'Their attention to detail and creative excellence is unmatched in the industry.',
+                author: 'Founder, Luxury Brand',
+              },
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                whileHover={{ y: -5 }}
+                className="p-8 rounded-2xl glass-premium border border-background-border hover:border-secondary-400/50 transition-all"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-yellow-400">★</span>
+                  ))}
+                </div>
+                <p className="text-text-muted mb-4 italic">&quot;{testimonial.quote}&quot;</p>
+                <p className="text-white font-semibold">{testimonial.author}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Stats */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             {[
-              { value: '500+', label: 'Projects' },
-              { value: '150+', label: 'Happy Clients' },
-              { value: '50M+', label: 'Total Reach' },
-              { value: '10+', label: 'Awards' },
+              { value: '1000+', label: 'Projects Completed' },
+              { value: '1000+', label: 'Happy Clients' },
+              { value: '400+', label: 'Brands' },
+              { value: '5+', label: 'Years Experience' },
             ].map((stat, index) => (
               <motion.div
                 key={index}
